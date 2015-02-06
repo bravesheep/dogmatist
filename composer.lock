@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ecf0d6d5e6439fff69deedb15d8d21b6",
+    "hash": "8ca1fc0a4662d20cf487560a8d35fbf5",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -889,16 +889,16 @@
         },
         {
             "name": "crysalead/kahlan",
-            "version": "dev-master",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/crysalead/kahlan.git",
-                "reference": "702899d74b43e003fe1fb790245ea1e4696d66d3"
+                "reference": "5b4cce2c3290d4c81b5dedfda1597acb048b550f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/crysalead/kahlan/zipball/702899d74b43e003fe1fb790245ea1e4696d66d3",
-                "reference": "702899d74b43e003fe1fb790245ea1e4696d66d3",
+                "url": "https://api.github.com/repos/crysalead/kahlan/zipball/5b4cce2c3290d4c81b5dedfda1597acb048b550f",
+                "reference": "5b4cce2c3290d4c81b5dedfda1597acb048b550f",
                 "shasum": ""
             },
             "require": {
@@ -943,7 +943,7 @@
                 "testing",
                 "unit test"
             ],
-            "time": "2015-02-04 17:10:36"
+            "time": "2015-02-02 22:08:17"
         },
         {
             "name": "crysalead/set",
@@ -1029,13 +1029,12 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "crysalead/kahlan": 20,
-        "crysalead/jit": 20,
-        "crysalead/box": 20,
-        "crysalead/filter": 20,
-        "crysalead/string": 20,
+        "crysalead/dir": 20,
         "crysalead/set": 20,
-        "crysalead/dir": 20
+        "crysalead/string": 20,
+        "crysalead/jit": 20,
+        "crysalead/filter": 20,
+        "crysalead/box": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

@@ -8,7 +8,7 @@
         "symfony/property-access": "~2.6"
     },
     "require-dev": {
-        "crysalead/kahlan": "dev-master",
+        "crysalead/kahlan": "~1.0",
         "crysalead/jit": "dev-master",
         "crysalead/box": "dev-master",
         "crysalead/filter": "dev-master",
