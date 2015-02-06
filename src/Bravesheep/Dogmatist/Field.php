@@ -1,0 +1,317 @@
+<?php
+
+namespace Bravesheep\Dogmatist;
+
+class Field 
+{
+    /**
+     * Ignore this field.
+     */
+    const TYPE_NONE = 1;
+
+    /**
+     * Generate a value using faker.
+     */
+    const TYPE_FAKED = 2;
+
+    /**
+     * Create a relation to another builder.
+     */
+    const TYPE_RELATION = 4;
+
+    /**
+     * Select a value from a predetermined list of options.
+     */
+    const TYPE_SELECT = 8;
+
+    /**
+     * Link to one of the other generated values from another builder.
+     */
+    const TYPE_LINK = 16;
+
+    /**
+     * The name of the field.
+     * @var string
+     */
+    private $name;
+
+    /**
+     * Type of the field (one of the TYPE_ constants).
+     * @var int
+     */
+    private $type = self::TYPE_NONE;
+
+    /**
+     * Whether or not this field should generate multiple values (i.e. an array)
+     * @var bool
+     */
+    private $multiple;
+
+    /**
+     * If the field is faked, the type faker should use.
+     * @var string
+     */
+    private $faked_type;
+
+    /**
+     * If the field is faked, extra options for faking the field.
+     * @var string
+     */
+    private $faked_options;
+
+    /**
+     * The target stored inside the linkmanager from which the value should be copied.
+     * @see LinkManager
+     * @var string
+     */
+    private $link_target;
+
+    /**
+     * The minimum number of items created (if the field will return multiple values).
+     * @var int
+     */
+    private $min;
+
+    /**
+     * The maximum number of items created (if the field will return multiple values).
+     * @var int
+     */
+    private $max;
+
+    /**
+     * The builder that is related to this field (if the type is relation).
+     * @var Builder
+     */
+    private $related;
+
+    /**
+     * The selection of possible values if this field is set to select.
+     * @var array
+     */
+    private $selection;
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return int
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMultiple()
+    {
+        return $this->multiple;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSingular()
+    {
+        return !$this->isMultiple();
+    }
+
+    /**
+     * @return string
+     */
+    public function getFakedType()
+    {
+        return $this->faked_type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFakedOptions()
+    {
+        return $this->faked_options;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMin()
+    {
+        return $this->min;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMax()
+    {
+        return $this->max;
+    }
+
+    /**
+     * @return Builder
+     */
+    public function getRelated()
+    {
+        return $this->related;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSelection()
+    {
+        return $this->selection;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLinkTarget()
+    {
+        return $this->link_target;
+    }
+
+    /**
+     * @param int $type
+     * @return bool
+     */
+    public function isType($type)
+    {
+        return $this->type === $type;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNone()
+    {
+        return $this->isType(self::TYPE_NONE);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFaked()
+    {
+        return $this->isType(self::TYPE_FAKED);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRelation()
+    {
+        return $this->isType(self::TYPE_RELATION);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSelect()
+    {
+        return $this->isType(self::TYPE_SELECT);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLink()
+    {
+        return $this->isType(self::TYPE_LINK);
+    }
+
+    /**
+     * @return $this
+     */
+    public function setNone()
+    {
+        $this->type = self::TYPE_NONE;
+        return $this;
+    }
+
+    /**
+     * @param string $type
+     * @param array  $options
+     * @return $this
+     */
+    public function setFaked($type, array $options = [])
+    {
+        $this->type = self::TYPE_FAKED;
+        $this->faked_type = $type;
+        $this->faked_options = $options;
+        return $this;
+    }
+
+    /**
+     * @param Builder $builder
+     * @return $this
+     */
+    public function setRelation(Builder $builder)
+    {
+        $this->type = self::TYPE_RELATION;
+        $this->related = $builder;
+        return $this;
+    }
+
+    /**
+     * @param array $values
+     * @return $this
+     */
+    public function setSelect(array $values)
+    {
+        $this->type = self::TYPE_SELECT;
+        $this->selection = $values;
+        return $this;
+    }
+
+    /**
+     * @param string $target
+     * @return $this
+     */
+    public function setLink($target)
+    {
+        $this->type = self::TYPE_LINK;
+        $this->link_target = $target;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setSingular()
+    {
+        $this->multiple = false;
+        $this->min = 1;
+        $this->max = 1;
+        return $this;
+    }
+
+    /**
+     * @param int $min
+     * @param int $max
+     * @return $this
+     */
+    public function setMultiple($min, $max)
+    {
+        if ($min === 1 && $max === 1) {
+            $this->setSingular();
+        } else {
+            $this->multiple = true;
+            $this->min = $min;
+            $this->max = $max;
+        }
+        return $this;
+    }
+}
