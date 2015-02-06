@@ -2,6 +2,7 @@
 
 namespace Bravesheep\Dogmatist;
 
+use Bravesheep\Dogmatist\Exception\SampleException;
 use Bravesheep\Dogmatist\Filler\FillerInterface;
 use Faker\Generator as FakerGenerator;
 
@@ -156,16 +157,45 @@ class Dogmatist
      */
     public function sample($name)
     {
-        $builder = $this->getLinkManager()->retrieve($name);
-        return $this->getSampler()->sample($builder);
+        $samples = $this->getLinkManager()->samples($name);
+        return $this->getFaker()->randomElement($samples);
     }
 
     /**
      * @param string $name
      * @param int    $count
-     * @return object[]
+     * @return \object[]
+     * @throws SampleException
      */
     public function samples($name, $count)
+    {
+        $samples = $this->getLinkManager()->samples($name);
+        $sample_count = count($samples);
+        if ($sample_count < $count) {
+            throw new SampleException("Wanted to generate {$count} samples, but only {$sample_count} are available");
+        }
+
+        return $this->getFaker()->randomElements($samples, $count);
+    }
+
+    /**
+     * Returns a fresh sample.
+     * @param string $name
+     * @return array|object
+     */
+    public function freshSample($name)
+    {
+        $builder = $this->getLinkManager()->retrieve($name);
+        return $this->getSampler()->sample($builder);
+    }
+
+    /**
+     * Returns fresh samples.
+     * @param string $name
+     * @param int    $count
+     * @return object[]
+     */
+    public function freshSamples($name, $count)
     {
         $builder = $this->getLinkManager()->retrieve($name);
         return $this->getSampler()->samples($builder, $count);
