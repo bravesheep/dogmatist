@@ -29,11 +29,6 @@ class Dogmatist
     private $sampler;
 
     /**
-     * @var bool
-     */
-    private $strict = true;
-
-    /**
      * @return Sampler
      */
     public function getSampler()
@@ -107,24 +102,6 @@ class Dogmatist
     public function getFiller()
     {
         return $this->filler;
-    }
-
-    /**
-     * @param bool $strict
-     * @return $this
-     */
-    public function setStrict($strict)
-    {
-        $this->strict = $strict;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isStrict()
-    {
-        return $this->strict;
     }
 
     /**

@@ -12,7 +12,7 @@ class Field
     /**
      * Generate a value using faker.
      */
-    const TYPE_FAKED = 2;
+    const TYPE_FAKE = 2;
 
     /**
      * Create a relation to another builder.
@@ -30,8 +30,13 @@ class Field
     const TYPE_LINK = 16;
 
     /**
+     * Select a value from a predetermined list, where the list only has one option.
+     */
+    const TYPE_VALUE = 32;
+
+    /**
      * The name of the field.
-     * @var string
+     * @var string|int
      */
     private $name;
 
@@ -49,7 +54,8 @@ class Field
 
     /**
      * If the field is faked, the type faker should use.
-     * @var string
+     * Can also take a callback which will be provided with the faker instance used.
+     * @var string|callback
      */
     private $faked_type;
 
@@ -90,13 +96,16 @@ class Field
      */
     private $selection;
 
+    /**
+     * @param string|int $name
+     */
     public function __construct($name)
     {
         $this->name = $name;
     }
 
     /**
-     * @return string
+     * @return string|int
      */
     public function getName()
     {
@@ -128,7 +137,7 @@ class Field
     }
 
     /**
-     * @return string
+     * @return string|callback
      */
     public function getFakedType()
     {
@@ -203,9 +212,9 @@ class Field
     /**
      * @return bool
      */
-    public function isFaked()
+    public function isFake()
     {
-        return $this->isType(self::TYPE_FAKED);
+        return $this->isType(self::TYPE_FAKE);
     }
 
     /**
@@ -227,6 +236,14 @@ class Field
     /**
      * @return bool
      */
+    public function isValue()
+    {
+        return $this->isType(self::TYPE_VALUE);
+    }
+
+    /**
+     * @return bool
+     */
     public function isLink()
     {
         return $this->isType(self::TYPE_LINK);
@@ -242,13 +259,13 @@ class Field
     }
 
     /**
-     * @param string $type
-     * @param array  $options
+     * @param string|callback $type
+     * @param array           $options
      * @return $this
      */
-    public function setFaked($type, array $options = [])
+    public function setFake($type, array $options = [])
     {
-        $this->type = self::TYPE_FAKED;
+        $this->type = self::TYPE_FAKE;
         $this->faked_type = $type;
         $this->faked_options = $options;
         return $this;
@@ -273,6 +290,17 @@ class Field
     {
         $this->type = self::TYPE_SELECT;
         $this->selection = $values;
+        return $this;
+    }
+
+    /**
+     * @param mixed $value
+     * @return $this
+     */
+    public function setValue($value)
+    {
+        $this->type = self::TYPE_VALUE;
+        $this->selection = [$value];
         return $this;
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 use Bravesheep\Dogmatist\Builder;
+use Bravesheep\Dogmatist\Exception\NoSuchIndexException;
 use Bravesheep\Dogmatist\Exception\SampleException;
 use Bravesheep\Dogmatist\Factory;
 use Bravesheep\Dogmatist\Filler\FillerInterface;
@@ -33,15 +34,9 @@ describe("Dogmatist", function () {
         expect($this->dogmatist->getFaker())->toBeAnInstanceOf(\Faker\Generator::class);
     });
 
-    it("should be possible to change strictness", function () {
-        expect($this->dogmatist->isStrict())->toBe(true);
-        $this->dogmatist->setStrict(false);
-        expect($this->dogmatist->isStrict())->toBe(false);
-    });
-
-    describe("sampling saved builders", function () {
+    describe("working with saved builders", function () {
         beforeEach(function () {
-            $this->builder = $this->dogmatist->create('object')->faked('example', 'name')->save('example', 1);
+            $this->builder = $this->dogmatist->create('object')->fake('example', 'name')->save('example', 1);
         });
 
         it("should create a sample from a saved builder", function () {
@@ -70,6 +65,27 @@ describe("Dogmatist", function () {
 
         it("should be allowed to generate more fresh samples", function () {
             expect($this->dogmatist->freshSamples('example', 10))->toHaveLength(10);
+        });
+
+        it("should generate multiple unique samples", function () {
+            $this->dogmatist->create('object')->fake('example', 'name')->save('subexample', 2);
+            $samples = $this->dogmatist->samples('subexample', 2);
+            expect($samples)->toHaveLength(2);
+            expect($samples[0])->not->toBe($samples[1]);
+        });
+
+        it("should fail on retrieving a non-existant builder", function () {
+            $task = function () {
+                $this->dogmatist->sample('non-existant');
+            };
+            expect($task)->toThrow(new NoSuchIndexException());
+        });
+
+        it("should clear samples for overwritten builders", function () {
+            $sample = $this->dogmatist->sample('example');
+            $this->dogmatist->create('array')->fake('item', 'randomNumber')->save('example', 1);
+            $new_sample = $this->dogmatist->sample('example');
+            expect($sample)->not->toBe($new_sample);
         });
     });
 });

@@ -79,27 +79,28 @@ class Sampler
     private function sampleField(Field $field)
     {
         $faker = $this->dogmatist->getFaker();
-        switch ($field->getType()) {
-            case Field::TYPE_FAKED:
-                try {
-                    return $faker->format($field->getFakedType(), $field->getFakedOptions());
-                } catch (\Exception $e) {
-                    throw new SampleException("Could not fake value of type {$field->getFakedType()}", 0, $e);
-                }
-                break;
-            case Field::TYPE_SELECT:
-                return $faker->randomElement($field->getSelection());
-                break;
-            case Field::TYPE_RELATION:
-                return $this->sample($field->getRelated());
-                break;
-            case Field::TYPE_LINK:
-                $samples = $this->dogmatist->getLinkManager()->samples($field->getLinkTarget());
-                return $faker->randomElement($samples);
-                break;
-            default:
-                throw new SampleException("Could not generate data for field of type {$field->getType()}");
+        $type = $field->getType();
+        $value = null;
+
+        if (Field::TYPE_FAKE === $type) {
+            try {
+                $value = $faker->format($field->getFakedType(), $field->getFakedOptions());
+            } catch (\Exception $e) {
+                throw new SampleException("Could not fake value of type {$field->getFakedType()}", 0, $e);
+            }
+        } elseif (Field::TYPE_VALUE === $type || Field::TYPE_SELECT === $type) {
+            $value = $faker->randomElement($field->getSelection());
+        } elseif (Field::TYPE_RELATION === $type) {
+            $value = $this->sample($field->getRelated());
+        } elseif (Field::TYPE_LINK === $type) {
+            $samples = $this->dogmatist->getLinkManager()->samples($field->getLinkTarget());
+            $value = $faker->randomElement($samples);
         }
+
+        if (null === $value) {
+            throw new SampleException("Could not generate data for field of type {$field->getType()}");
+        }
+        return $value;
     }
 
     /**
@@ -111,7 +112,7 @@ class Sampler
     private function insertInObject(array $data, Builder $builder)
     {
         // special case for arrays: just return the array data
-        if ($builder->getClass() === 'array') {
+        if ($builder->getClass() === 'array' || $builder->getClass() === '__construct') {
             return $data;
         }
 
@@ -121,26 +122,87 @@ class Sampler
         }
 
         $refl = new \ReflectionClass($builder->getClass());
-        $constructor = $refl->getConstructor();
-        if ($constructor === null || $constructor->getNumberOfRequiredParameters() === 0) {
-            $obj = $refl->newInstance();
-        } else {
-            // TODO: allow user to define construction parameters
-            $obj = $refl->newInstanceWithoutConstructor();
-        }
+        $obj = $this->constructObject($refl, $builder);
 
         foreach ($data as $key => $val) {
             try {
                 $this->accessor->setValue($obj, $key, $val);
             } catch (NoSuchPropertyException $e) {
-                if ($this->dogmatist->isStrict()) {
+                if ($builder->isStrict()) {
                     throw new SampleException("Could not set value", 0, $e);
                 } else {
-                    $obj->{$key} = $val;
+                    if ($refl->hasProperty($key)) {
+                        $prop = $refl->getProperty($key);
+                        $prop->setAccessible(true);
+                        $prop->setValue($obj, $val);
+                        $prop->setAccessible(false);
+                    } else {
+                        $obj->{$key} = $val;
+                    }
                 }
             }
         }
 
         return $obj;
+    }
+
+    /**
+     * @param \ReflectionClass $refl
+     * @param Builder          $builder
+     * @return object
+     * @throws SampleException
+     */
+    private function constructObject(\ReflectionClass $refl, Builder $builder)
+    {
+        $constructor = $refl->getConstructor();
+        $obj = null;
+        if (null === $constructor || $constructor->getNumberOfParameters() === 0) {
+            $obj = $refl->newInstance();
+        } elseif ($constructor) {
+            if (!$builder->hasConstructor() && $constructor->getNumberOfRequiredParameters() === 0) {
+                $obj = $refl->newInstance();
+            } elseif ($builder->hasConstructor()) {
+                $args = $this->alignArgs($constructor, $this->sample($builder->constructor()), $builder->constructor());
+                if (count($args) < $constructor->getNumberOfRequiredParameters()) {
+                    throw new SampleException("Not enough arguments provided for constructing the object");
+                }
+                $obj = $refl->newInstanceArgs($args);
+            }
+        }
+
+        if (null === $obj && !$builder->isStrict()) {
+            $obj = $refl->newInstanceWithoutConstructor();
+        } elseif (null === $obj) {
+            throw new SampleException("Constructor required for constructing {$builder->getClass()} in strict mode");
+        }
+
+        return $obj;
+    }
+
+    /**
+     * @param \ReflectionMethod $constructor
+     * @param array             $data
+     * @return array
+     * @throws SampleException
+     */
+    private function alignArgs(\ReflectionMethod $constructor, array $data, ConstructorBuilder $builder)
+    {
+        if ($builder->isPositional()) {
+            return $data;
+        }
+
+        $aligned = [];
+        foreach ($constructor->getParameters() as $param) {
+            if (isset($data[$param->getName()])) {
+                $aligned[] = $data[$param->getName()];
+            } else {
+                try {
+                    $aligned[] = $param->getDefaultValue();
+                } catch (\ReflectionException $e) {
+                    throw new SampleException("No value provided for argument {$param->getName()}", 0, $e);
+                }
+            }
+        }
+        return $aligned;
     }
 }
