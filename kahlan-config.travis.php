@@ -6,7 +6,6 @@ use kahlan\reporter\coverage\exporter\CodeClimate;
 
 $args = $this->args();
 $args->argument('coverage', 'default', 3);
-$args->argument('clover', 'default', 'clover.xml');
 
 Filter::register('kahlan.coverage-exporter', function ($chain) {
     $reporter = $this->reporters()->get('coverage');
