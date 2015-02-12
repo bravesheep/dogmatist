@@ -25,7 +25,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Bravesheep\\Dogmatist\\": "src/Bravesheep/Dogmatist/",
+            "Bravesheep\\Dogmatist\\": "src/",
             "Bravesheep\\Spec\\": "spec/example/"
         }
     }
