@@ -1,3 +1,4 @@
 /vendor/
 /clover.xml
 /codeclimate.json
+/docs/_build
