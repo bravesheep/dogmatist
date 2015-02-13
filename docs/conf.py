@@ -7,8 +7,7 @@ from pygments.lexers.web import PhpLexer
 
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.intersphinx',
-    'sphinx_http_domain'
+    'sphinx.ext.intersphinx'
 ]
 templates_path = ['_templates']
 source_suffix = '.rst'
