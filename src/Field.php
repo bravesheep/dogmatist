@@ -333,13 +333,9 @@ class Field
      */
     public function setMultiple($min, $max)
     {
-        if ($min === 1 && $max === 1) {
-            $this->setSingular();
-        } else {
-            $this->multiple = true;
-            $this->min = $min;
-            $this->max = $max;
-        }
+        $this->multiple = true;
+        $this->min = $min;
+        $this->max = $max;
         return $this;
     }
 }

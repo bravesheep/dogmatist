@@ -98,13 +98,13 @@ describe("Builder", function () {
         expect($field->isSingular())->toBe(true);
     });
 
-    it("should set a field to produce a single item if set via multiple", function () {
+    it("should set a field to produce a single item as an array if set via multiple", function () {
         $this->builder->fake('example', 'number');
         $this->builder->multiple('example', 1, 1);
         $field = $this->builder->get('example');
 
-        expect($field->isMultiple())->toBe(false);
-        expect($field->isSingular())->toBe(true);
+        expect($field->isMultiple())->toBe(true);
+        expect($field->isSingular())->toBe(false);
     });
 
     it("should not be possible to add a field to a builder that is not keyed using int or string", function () {
