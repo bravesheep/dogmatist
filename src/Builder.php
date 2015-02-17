@@ -240,6 +240,8 @@ class Builder
     }
 
     /**
+     * Return the parent Builder instance, or if there is no parent return the
+     * attached Dogmatist instance.
      * @return Builder|Dogmatist
      */
     public function done()
@@ -251,17 +253,20 @@ class Builder
     }
 
     /**
-     * @param string $name
-     * @param int    $generate
+     * Save this builder as a named builder in the attached Dogmatist instance.
+     * @param string $name     The name under which the Builder should be stored.
+     * @param int    $generate The number of samples to generate, if less than
+     *                         or equal to zero, unlimited samples will be generated.
      * @return $this
      */
-    public function save($name, $generate = 1)
+    public function save($name, $generate = -1)
     {
         $this->dogmatist->save($this, $name, $generate);
         return $this;
     }
 
     /**
+     * Retrieve the fields that are described by this builder.
      * @return Field[]
      */
     public function getFields()
@@ -270,6 +275,7 @@ class Builder
     }
 
     /**
+     * Retrieve the type of objects this builder should generate samples for.
      * @return string
      */
     public function getClass()
@@ -278,6 +284,8 @@ class Builder
     }
 
     /**
+     * Provide a callback function which should be called whenever a new sample
+     * is created using this Builder.
      * @param callback $callback
      * @return $this
      */
@@ -288,6 +296,8 @@ class Builder
     }
 
     /**
+     * Retrieve the list of listeners which should be called when a new sample is
+     * generated.
      * @return callback[]
      */
     public function getListeners()

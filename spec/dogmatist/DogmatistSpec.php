@@ -87,5 +87,63 @@ describe("Dogmatist", function () {
             $new_sample = $this->dogmatist->sample('example');
             expect($sample)->not->toBe($new_sample);
         });
+
+        describe("working with unlimited samples", function () {
+            beforeEach(function () {
+                $this->unlimited_builder = $this->dogmatist->create('object')
+                    ->fake('data', 'randomNumber')
+                    ->save('unlimited')
+                ;
+            });
+
+            it("should create samples using the sample() method", function () {
+                $sample1 = $this->dogmatist->sample('unlimited');
+                $sample2 = $this->dogmatist->sample('unlimited');
+                expect($sample1)->toBeA('object');
+                expect($sample2)->toBeA('object');
+                expect($sample1)->not->toBe($sample2);
+            });
+
+            it("should create samples using the samples() method", function () {
+                $samples = $this->dogmatist->samples('unlimited', 2);
+                expect($samples)->toBeA('array');
+                expect($samples)->toHaveLength(2);
+                expect($samples[0])->not->toBe($samples[1]);
+            });
+        });
+    });
+
+    describe("Sampling from non-saved builders", function () {
+        beforeEach(function () {
+            $this->builder = $this->dogmatist->create('object')->fake('num', 'randomNumber');
+        });
+
+        it("should create a sample from a non-saved builder", function () {
+            $sample = $this->dogmatist->sample($this->builder);
+            expect($sample)->toBeAnInstanceOf(stdClass::class);
+            expect($sample->num)->toBeA('integer');
+        });
+
+        it("should create multiple samples from a non-saved builder", function () {
+            $samples = $this->dogmatist->samples($this->builder, 2);
+            expect($samples)->toBeA('array');
+            expect($samples)->toHaveLength(2);
+            expect($samples[0])->toBeAnInstanceOf(stdClass::class);
+            expect($samples[1])->toBeAnInstanceOf(stdClass::class);
+        });
+
+        it("should create a sample from a non-saved builder using the fresh method", function () {
+            $sample = $this->dogmatist->freshSample($this->builder);
+            expect($sample)->toBeAnInstanceOf(stdClass::class);
+            expect($sample->num)->toBeA('integer');
+        });
+
+        it("should create multiple samples from a non-saved builder using the fresh method", function () {
+            $samples = $this->dogmatist->freshSamples($this->builder, 2);
+            expect($samples)->toBeA('array');
+            expect($samples)->toHaveLength(2);
+            expect($samples[0])->toBeAnInstanceOf(stdClass::class);
+            expect($samples[1])->toBeAnInstanceOf(stdClass::class);
+        });
     });
 });

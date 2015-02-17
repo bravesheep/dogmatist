@@ -55,10 +55,19 @@ class LinkManager
      */
     public function retrieve($name)
     {
-        if (isset($this->builders[$name])) {
+        if ($this->has($name)) {
             return $this->builders[$name];
         }
         throw new NoSuchIndexException("There is no builder named {$name}");
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function has($name)
+    {
+        return isset($this->builders[$name]);
     }
 
     /**
@@ -73,5 +82,17 @@ class LinkManager
         }
 
         return $this->samples[$name];
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasUnlimitedSamples($name)
+    {
+        if ($this->has($name)) {
+            return $this->counts[$name] <= 0;
+        }
+        return false;
     }
 }
