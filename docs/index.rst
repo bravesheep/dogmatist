@@ -12,3 +12,5 @@ called samples.
 
     getting_started
     describing
+    sampling
+    examples
