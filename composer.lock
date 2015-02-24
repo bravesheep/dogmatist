@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f579b03287525ce3a45cec7a3cfd4499",
+    "hash": "6512a4d64437574d91d55ebced3a6c5d",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -855,12 +855,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/crysalead/jit.git",
-                "reference": "8d10dee0429031ff064508adb655cafce3f5efc7"
+                "reference": "a4d3e722e2f512fe5c1a0069e3001a754e959ea6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/crysalead/jit/zipball/8d10dee0429031ff064508adb655cafce3f5efc7",
-                "reference": "8d10dee0429031ff064508adb655cafce3f5efc7",
+                "url": "https://api.github.com/repos/crysalead/jit/zipball/a4d3e722e2f512fe5c1a0069e3001a754e959ea6",
+                "reference": "a4d3e722e2f512fe5c1a0069e3001a754e959ea6",
                 "shasum": ""
             },
             "require": {
@@ -885,20 +885,20 @@
                 "Code Patcher",
                 "jit"
             ],
-            "time": "2015-02-11 03:10:13"
+            "time": "2015-02-14 13:49:58"
         },
         {
             "name": "crysalead/kahlan",
-            "version": "1.0.6",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/crysalead/kahlan.git",
-                "reference": "84706b0da19a92378876a349e132a206a6d1ddcb"
+                "reference": "f58e8a942cc6820b9160badf8dcabb5dd89c2efa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/crysalead/kahlan/zipball/84706b0da19a92378876a349e132a206a6d1ddcb",
-                "reference": "84706b0da19a92378876a349e132a206a6d1ddcb",
+                "url": "https://api.github.com/repos/crysalead/kahlan/zipball/f58e8a942cc6820b9160badf8dcabb5dd89c2efa",
+                "reference": "f58e8a942cc6820b9160badf8dcabb5dd89c2efa",
                 "shasum": ""
             },
             "require": {
@@ -943,7 +943,7 @@
                 "testing",
                 "unit test"
             ],
-            "time": "2015-02-11 15:25:13"
+            "time": "2015-02-16 04:02:49"
         },
         {
             "name": "crysalead/set",
@@ -1029,6 +1029,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "crysalead/kahlan": 20,
         "crysalead/jit": 20,
         "crysalead/box": 20,
         "crysalead/filter": 20,

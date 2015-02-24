@@ -23,11 +23,13 @@ class ConstructorBuilder extends Builder
      */
     protected function checkState($field)
     {
+        if (is_int($field)) {
+            $this->preparePositional();
+        }
+
         if (count($this->getFields()) > 0) {
             if (is_string($field) && $this->isPositional()) {
                 throw new BuilderException("Cannot add named argument to positional arguments");
-            } elseif (is_int($field) && !$this->isPositional()) {
-                throw new BuilderException("Cannot add positional argument to named arguments");
             } else {
                 parent::checkState($field);
             }
@@ -61,7 +63,6 @@ class ConstructorBuilder extends Builder
      */
     public function argFake($type, array $options = [])
     {
-        $this->preparePositional();
         return $this->fake($this->nextPositional(), $type, $options);
     }
 
@@ -72,7 +73,6 @@ class ConstructorBuilder extends Builder
      */
     public function argSelect(array $options)
     {
-        $this->preparePositional();
         return $this->select($this->nextPositional(), $options);
     }
 
@@ -83,7 +83,6 @@ class ConstructorBuilder extends Builder
      */
     public function argValue($value)
     {
-        $this->preparePositional();
         return $this->value($this->nextPositional(), $value);
     }
 
@@ -94,7 +93,6 @@ class ConstructorBuilder extends Builder
      */
     public function argRelation($type)
     {
-        $this->preparePositional();
         return $this->relation($this->nextPositional(), $type);
     }
 
@@ -105,7 +103,6 @@ class ConstructorBuilder extends Builder
      */
     public function argLink($target)
     {
-        $this->preparePositional();
         return $this->link($this->nextPositional(), $target);
     }
 
