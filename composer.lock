@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6512a4d64437574d91d55ebced3a6c5d",
+    "hash": "7c44d8bf16861776387b86e266fd2dd0",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -889,16 +889,16 @@
         },
         {
             "name": "crysalead/kahlan",
-            "version": "dev-master",
+            "version": "dev-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/crysalead/kahlan.git",
-                "reference": "f58e8a942cc6820b9160badf8dcabb5dd89c2efa"
+                "reference": "5c21dc270dd07a268051a3a954c594364326e84f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/crysalead/kahlan/zipball/f58e8a942cc6820b9160badf8dcabb5dd89c2efa",
-                "reference": "f58e8a942cc6820b9160badf8dcabb5dd89c2efa",
+                "url": "https://api.github.com/repos/crysalead/kahlan/zipball/5c21dc270dd07a268051a3a954c594364326e84f",
+                "reference": "5c21dc270dd07a268051a3a954c594364326e84f",
                 "shasum": ""
             },
             "require": {
@@ -943,7 +943,7 @@
                 "testing",
                 "unit test"
             ],
-            "time": "2015-02-16 04:02:49"
+            "time": "2015-02-24 15:03:57"
         },
         {
             "name": "crysalead/set",
