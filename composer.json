@@ -9,13 +9,7 @@
         "doctrine/annotations": "~1.2"
     },
     "require-dev": {
-        "crysalead/kahlan": "dev-dev",
-        "crysalead/jit": "dev-master",
-        "crysalead/box": "dev-master",
-        "crysalead/filter": "dev-master",
-        "crysalead/string": "dev-master",
-        "crysalead/set": "dev-master",
-        "crysalead/dir": "dev-master"
+        "crysalead/kahlan": "dev-dev"
     },
     "license": "MIT",
     "authors": [
