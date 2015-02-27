@@ -32,12 +32,12 @@ class AnnotationFiller implements FillerInterface
             $refl = new \ReflectionClass($class);
             /** @var Annotations\Dogma $annot */
             $annot = $this->reader->getClassAnnotation($refl, Annotations\Dogma::class);
-            if ($annot !== null) {
+            if (null !== $annot) {
                 $builder->setStrict($annot->strict);
-
-                $this->processConstructor($refl, $builder);
-                $this->processFields($refl, $builder);
             }
+
+            $this->processConstructor($refl, $builder);
+            $this->processFields($refl, $builder);
         }
     }
 

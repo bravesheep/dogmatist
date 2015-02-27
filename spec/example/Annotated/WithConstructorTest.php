@@ -5,7 +5,7 @@ namespace Bravesheep\Spec\Annotated;
 use Bravesheep\Dogmatist\Filler\Annotations as Dogmatist;
 
 /**
- * @Dogmatist\Dogma()
+ * @Dogmatist\Dogma(strict=false)
  */
 class WithConstructorTest
 {

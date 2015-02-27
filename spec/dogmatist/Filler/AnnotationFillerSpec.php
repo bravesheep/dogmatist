@@ -80,10 +80,11 @@ describe("AnnotationFiller", function () {
         expect($builder->get('faked')->getType())->toBe(Field::TYPE_FAKE);
     });
 
-    it("should not use any annotation if the class is not annotated", function () {
+    it("should use annotations if the class is not annotated", function () {
         $builder = $this->dogmatist->create(MissingClassAnnotationTest::class);
 
-        expect($builder->getFields())->toHaveLength(0);
+        expect($builder->getFields())->toHaveLength(1);
+        expect($builder->get('faked')->getType())->toBe(Field::TYPE_FAKE);
         expect($builder->hasConstructor())->toBe(false);
     });
 
@@ -92,5 +93,15 @@ describe("AnnotationFiller", function () {
 
         expect($builder->get('field')->getType())->toBe(Field::TYPE_FAKE);
         expect($builder->get('field')->isMultiple())->toBe(true);
+    });
+
+    it("should set strict mode from the dogma annotation", function () {
+        $nonstrict = $this->dogmatist->create(WithConstructorTest::class);
+        $strict_implicit = $this->dogmatist->create(FakedFieldTest::class);
+        $strict_explicit = $this->dogmatist->create(ValueFieldTest::class);
+
+        expect($nonstrict->isStrict())->toBe(false);
+        expect($strict_explicit->isStrict())->toBe(true);
+        expect($strict_implicit->isStrict())->toBe(true);
     });
 });
