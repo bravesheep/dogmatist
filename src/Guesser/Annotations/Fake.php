@@ -1,6 +1,6 @@
 <?php
 
-namespace Bravesheep\Dogmatist\Filler\Annotations;
+namespace Bravesheep\Dogmatist\Guesser\Annotations;
 
 use Doctrine\Common\Annotations\Annotation\Required;
 
@@ -8,17 +8,16 @@ use Doctrine\Common\Annotations\Annotation\Required;
  * @Annotation
  * @Target({"PROPERTY", "ANNOTATION"})
  */
-class Multiple implements QuantityInterface
+class Fake implements FieldInterface
 {
     /**
-     * @var int
+     * @var string
      * @Required()
      */
-    public $min;
+    public $type;
 
     /**
-     * @var int
-     * @Required()
+     * @var array
      */
-    public $max;
+    public $args = [];
 }

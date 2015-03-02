@@ -3,8 +3,8 @@
 namespace Bravesheep\Dogmatist;
 
 use Bravesheep\Dogmatist\Exception\InvalidArgumentException;
-use Bravesheep\Dogmatist\Filler\FillerInterface;
-use Bravesheep\Dogmatist\Filler\PhpDocFiller;
+use Bravesheep\Dogmatist\Guesser\GuesserInterface;
+use Bravesheep\Dogmatist\Guesser\NoneGuesser;
 use Faker\Generator as FakerGenerator;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -13,7 +13,7 @@ class Factory
 {
     public static function create(
         $faker = \Faker\Factory::DEFAULT_LOCALE,
-        FillerInterface $filler = null,
+        GuesserInterface $filler = null,
         PropertyAccessorInterface $accessor = null
     ) {
         if (is_string($faker)) {
@@ -27,7 +27,7 @@ class Factory
         $dogmatist = new Dogmatist();
 
         if (null === $filler) {
-            $filler = new PhpDocFiller();
+            $filler = new NoneGuesser();
         }
 
         if (null === $accessor) {
@@ -38,7 +38,7 @@ class Factory
         $linkManager = new LinkManager($sampler);
 
         $dogmatist->setFaker($faker);
-        $dogmatist->setFiller($filler);
+        $dogmatist->setGuesser($filler);
         $dogmatist->setLinkManager($linkManager);
         $dogmatist->setSampler($sampler);
 

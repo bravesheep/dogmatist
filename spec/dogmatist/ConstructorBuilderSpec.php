@@ -82,7 +82,7 @@ describe("ConstructorBuilder", function () {
             $field = $this->builder->constructor()->get(0);
             expect($field->getName())->toBe(0);
             expect($field->getType())->toBe(Field::TYPE_FAKE);
-            expect($field->isFake())->toBe(true);
+            expect($field->isType(Field::TYPE_FAKE))->toBe(true);
             expect($field->getFakedType())->toBe('randomNumber');
         });
 
@@ -91,7 +91,7 @@ describe("ConstructorBuilder", function () {
             $field = $this->builder->constructor()->get(0);
             expect($field->getName())->toBe(0);
             expect($field->getType())->toBe(Field::TYPE_SELECT);
-            expect($field->isSelect())->toBe(true);
+            expect($field->isType(Field::TYPE_SELECT))->toBe(true);
             expect($field->getSelection())->toBe([1, 2, 3, 4, 5]);
         });
 
@@ -101,7 +101,7 @@ describe("ConstructorBuilder", function () {
 
             expect($field->getName())->toBe(0);
             expect($field->getType())->toBe(Field::TYPE_VALUE);
-            expect($field->isValue())->toBe(true);
+            expect($field->isType(Field::TYPE_VALUE))->toBe(true);
             expect($field->getSelection())->toBe(['test']);
         });
 
@@ -111,7 +111,7 @@ describe("ConstructorBuilder", function () {
 
             expect($field->getName())->toBe(0);
             expect($field->getType())->toBe(Field::TYPE_LINK);
-            expect($field->isLink())->toBe(true);
+            expect($field->isType(Field::TYPE_LINK))->toBe(true);
             expect($field->getLinkTarget())->toBe('other');
         });
 
@@ -121,9 +121,20 @@ describe("ConstructorBuilder", function () {
 
             expect($field->getName())->toBe(0);
             expect($field->getType())->toBe(Field::TYPE_RELATION);
-            expect($field->isRelation())->toBe(true);
+            expect($field->isType(Field::TYPE_RELATION))->toBe(true);
             expect($field->getRelated())->toBeAnInstanceOf(Builder::class);
             expect($field->getRelated()->done())->toBe($this->builder->constructor());
+        });
+
+        it("should add a positional callback", function () {
+            $cb = function () { return 0; };
+            $this->builder->constructor()->argCallback($cb);
+            $field = $this->builder->constructor()->get(0);
+
+            expect($field->getName())->toBe(0);
+            expect($field->getType())->toBe(Field::TYPE_CALLBACK);
+            expect($field->isType(Field::TYPE_CALLBACK))->toBe(true);
+            expect($field->getCallback())->toBe($cb);
         });
     });
 

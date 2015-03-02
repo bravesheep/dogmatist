@@ -152,6 +152,15 @@ are described below:
     type of description allows you to describe a sub-builder for that specific
     property. For example take some User class which contains an Address.
 
+``callback(field, callback)``
+    Calls the function callback with as the first arguments an array of all
+    fields generated up to this point, and as a second argument the associated
+    instance of Dogmatist. This callback function should return a value to be
+    used at that position. Note that you can set a callback field to multiple
+    (as seen below), in that case the callback will be called multiple times.
+    Also note that you don't have access to any fields described after having
+    described this one, as they still have to be generated.
+
 The previous methods all allow you to describe the type of the field. Every
 field can either generate an array of values or just a single value. By default
 all fields will be singular, but using the following two methods you can change
@@ -183,9 +192,9 @@ When describing the constructor you can choose one of two methods:
     the same methods as describing fields in a normal Builder.
 **Positional**
     Using positional arguments with the ``arg*`` methods: ``argFake()``,
-    ``argSelect()``, ``argValue()``, ``argLink()`` and ``argRelation()``. These
-    methods have the same signature as their named counterparts, except that you
-    can leave out the name of the field.
+    ``argSelect()``, ``argValue()``, ``argLink()``, ``argRelation()`` and
+    ``argCallback()``. These methods have the same signature as their named
+    counterparts, except that you can leave out the name of the field.
 
 To determine if a constructor is using named or positional arguments, you can
 use the ``isPositional()`` method on the constructor builder.

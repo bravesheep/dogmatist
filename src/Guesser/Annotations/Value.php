@@ -1,6 +1,6 @@
 <?php
 
-namespace Bravesheep\Dogmatist\Filler\Annotations;
+namespace Bravesheep\Dogmatist\Guesser\Annotations;
 
 use Doctrine\Common\Annotations\Annotation\Required;
 
@@ -8,11 +8,11 @@ use Doctrine\Common\Annotations\Annotation\Required;
  * @Annotation
  * @Target({"PROPERTY", "ANNOTATION"})
  */
-class Link implements FieldInterface
+class Value implements FieldInterface
 {
     /**
-     * @var string
+     * @var mixed
      * @Required()
      */
-    public $target;
+    public $value;
 }

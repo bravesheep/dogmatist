@@ -62,7 +62,7 @@ arguments. Three things can be provided by the programmer:
 
 1. An instance of ``Faker\Generator`` or a string specifying the language of
    the generator which should be constructed.
-2. An instance of ``Bravesheep\Dogmatist\Filler\FillerInterface``. A filler can
+2. An instance of ``Bravesheep\Dogmatist\Guesser\GuesserInterface``. A guesser can
    be used to automatically determine what should be generated.
 3. An instance of ``Symfony\Component\PropertyAccess\PropertyAccessorInterface``
    for setting properties. One will be constructed for you if you don't provide

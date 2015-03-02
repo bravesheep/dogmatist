@@ -1,13 +1,13 @@
 <?php
 
-namespace Bravesheep\Dogmatist\Filler;
+namespace Bravesheep\Dogmatist\Guesser;
 
 use Bravesheep\Dogmatist\Builder;
 use Bravesheep\Dogmatist\Util;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
 
-class AnnotationFiller implements FillerInterface
+class AnnotationGuesser implements GuesserInterface
 {
     private $reader;
 

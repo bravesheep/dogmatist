@@ -1,6 +1,6 @@
 <?php
 
-namespace Bravesheep\Dogmatist\Filler\Annotations;
+namespace Bravesheep\Dogmatist\Guesser\Annotations;
 
 /**
  * @Annotation()

@@ -2,7 +2,7 @@
 
 namespace Bravesheep\Spec\Annotated;
 
-use Bravesheep\Dogmatist\Filler\Annotations as Dogmatist;
+use Bravesheep\Dogmatist\Guesser\Annotations as Dogmatist;
 
 class MissingClassAnnotationTest
 {

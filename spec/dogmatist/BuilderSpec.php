@@ -18,7 +18,7 @@ describe("Builder", function () {
         $this->builder->fake('example', 'number');
         $field = $this->builder->get('example');
         expect($field->getType())->toBe(Field::TYPE_FAKE);
-        expect($field->isFake())->toBe(true);
+        expect($field->isType(Field::TYPE_FAKE))->toBe(true);
         expect($field->getName())->toBe('example');
         expect($field->getFakedOptions())->toBe([]);
         expect($field->getFakedType())->toBe('number');
@@ -29,14 +29,14 @@ describe("Builder", function () {
         $this->builder->none('example');
         $field = $this->builder->get('example');
         expect($field->getType())->toBe(Field::TYPE_NONE);
-        expect($field->isNone())->toBe(true);
+        expect($field->isType(Field::TYPE_NONE))->toBe(true);
     });
 
     it("should create a selection field", function () {
         $this->builder->select('example', [1, 2, 3, 4, 5]);
         $field = $this->builder->get('example');
         expect($field->getType())->toBe(Field::TYPE_SELECT);
-        expect($field->isSelect())->toBe(true);
+        expect($field->isType(Field::TYPE_SELECT))->toBe(true);
         expect($field->getName())->toBe('example');
         expect($field->getSelection())->toBe([1, 2, 3, 4, 5]);
     });
@@ -45,7 +45,7 @@ describe("Builder", function () {
         $this->builder->value('example', 'value');
         $field = $this->builder->get('example');
         expect($field->getType())->toBe(Field::TYPE_VALUE);
-        expect($field->isValue())->toBe(true);
+        expect($field->isType(Field::TYPE_VALUE))->toBe(true);
         expect($field->getName())->toBe('example');
         expect($field->getSelection())->toBe(['value']);
     });
@@ -56,7 +56,7 @@ describe("Builder", function () {
 
         expect($other)->not->toBe($this->builder);
         expect($field->getType())->toBe(Field::TYPE_RELATION);
-        expect($field->isRelation())->toBe(true);
+        expect($field->isType(Field::TYPE_RELATION))->toBe(true);
         expect($field->getName())->toBe('example');
         expect($field->getRelated())->toBe($other);
         expect($other->getClass())->toBe('array');
@@ -68,9 +68,20 @@ describe("Builder", function () {
         $field = $this->builder->get('example');
 
         expect($field->getType())->toBe(Field::TYPE_LINK);
-        expect($field->isLink())->toBe(true);
+        expect($field->isType(Field::TYPE_LINK))->toBe(true);
         expect($field->getName())->toBe('example');
         expect($field->getLinkTarget())->toBe('another');
+    });
+
+    it("should create a callback field", function () {
+        $cb = function () { return 0; };
+        $this->builder->callback('example', $cb);
+        $field = $this->builder->get('example');
+
+        expect($field->getType())->toBe(Field::TYPE_CALLBACK);
+        expect($field->isType(Field::TYPE_CALLBACK))->toBe(true);
+        expect($field->getName())->toBe('example');
+        expect($field->getCallback())->toBe($cb);
     });
 
     it("should return the dogmatist instance when done", function () {

@@ -3,7 +3,7 @@
 namespace Bravesheep\Dogmatist;
 
 use Bravesheep\Dogmatist\Exception\SampleException;
-use Bravesheep\Dogmatist\Filler\FillerInterface;
+use Bravesheep\Dogmatist\Guesser\GuesserInterface;
 use Faker\Generator as FakerGenerator;
 
 class Dogmatist
@@ -14,9 +14,9 @@ class Dogmatist
     private $faker;
 
     /**
-     * @var FillerInterface
+     * @var GuesserInterface
      */
-    private $filler;
+    private $guesser;
 
     /**
      * @var LinkManager
@@ -87,21 +87,21 @@ class Dogmatist
     }
 
     /**
-     * @param FillerInterface $filler
+     * @param GuesserInterface $guesser
      * @return $this
      */
-    public function setFiller(FillerInterface $filler)
+    public function setGuesser(GuesserInterface $guesser)
     {
-        $this->filler = $filler;
+        $this->guesser = $guesser;
         return $this;
     }
 
     /**
-     * @return FillerInterface
+     * @return GuesserInterface
      */
-    public function getFiller()
+    public function getGuesser()
     {
-        return $this->filler;
+        return $this->guesser;
     }
 
     /**
@@ -112,7 +112,7 @@ class Dogmatist
     public function create($className)
     {
         $builder = new Builder($className, $this);
-        $this->getFiller()->fill($builder);
+        $this->getGuesser()->fill($builder);
         return $builder;
     }
 

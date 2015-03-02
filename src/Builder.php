@@ -69,7 +69,7 @@ class Builder
         }
 
         foreach ($this->fields as $field) {
-            if ($field->isRelation()) {
+            if ($field->isType(Field::TYPE_RELATION)) {
                 $field->getRelated()->setStrict($strict);
             }
         }
@@ -236,6 +236,18 @@ class Builder
     {
         $field = $this->get($field);
         $field->setLink($target);
+        return $this;
+    }
+
+    /**
+     * @param string   $field
+     * @param callback $callback
+     * @return $this
+     */
+    public function callback($field, $callback)
+    {
+        $field = $this->get($field);
+        $field->setCallback($callback);
         return $this;
     }
 

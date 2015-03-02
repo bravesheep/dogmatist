@@ -1,6 +1,6 @@
 <?php
 
-namespace Bravesheep\Dogmatist\Filler\Annotations;
+namespace Bravesheep\Dogmatist\Guesser\Annotations;
 
 /**
  * @Annotation()
@@ -9,12 +9,12 @@ namespace Bravesheep\Dogmatist\Filler\Annotations;
 class Description implements AnnotationInterface
 {
     /**
-     * @var \Bravesheep\Dogmatist\Filler\Annotations\Field[]
+     * @var \Bravesheep\Dogmatist\Guesser\Annotations\Field[]
      */
     public $fields = [];
 
     /**
-     * @var \Bravesheep\Dogmatist\Filler\Annotations\Constructor
+     * @var \Bravesheep\Dogmatist\Guesser\Annotations\Constructor
      */
     public $constructor;
 }

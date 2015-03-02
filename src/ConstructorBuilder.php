@@ -107,6 +107,15 @@ class ConstructorBuilder extends Builder
     }
 
     /**
+     * @param callback $callback
+     * @return $this
+     */
+    public function argCallback($callback)
+    {
+        return $this->callback($this->nextPositional(), $callback);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function constructor()

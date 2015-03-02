@@ -1,10 +1,10 @@
 <?php
 
-namespace Bravesheep\Dogmatist\Filler;
+namespace Bravesheep\Dogmatist\Guesser;
 
 use Bravesheep\Dogmatist\Builder;
 
-interface FillerInterface
+interface GuesserInterface
 {
     /**
      * @param Builder $builder

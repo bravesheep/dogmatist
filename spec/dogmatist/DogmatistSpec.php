@@ -4,7 +4,7 @@ use Bravesheep\Dogmatist\Builder;
 use Bravesheep\Dogmatist\Exception\NoSuchIndexException;
 use Bravesheep\Dogmatist\Exception\SampleException;
 use Bravesheep\Dogmatist\Factory;
-use Bravesheep\Dogmatist\Filler\FillerInterface;
+use Bravesheep\Dogmatist\Guesser\GuesserInterface;
 use Bravesheep\Dogmatist\LinkManager;
 use Bravesheep\Dogmatist\Sampler;
 
@@ -26,8 +26,8 @@ describe("Dogmatist", function () {
         expect($this->dogmatist->getSampler())->toBeAnInstanceOf(Sampler::class);
     });
 
-    it("should retrieve the filler", function () {
-        expect($this->dogmatist->getFiller())->toBeAnInstanceOf(FillerInterface::class);
+    it("should retrieve the guesser", function () {
+        expect($this->dogmatist->getGuesser())->toBeAnInstanceOf(GuesserInterface::class);
     });
 
     it("should retrieve the faker instance", function () {

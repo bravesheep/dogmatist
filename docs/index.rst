@@ -13,5 +13,5 @@ called samples.
     getting_started
     describing
     sampling
-    fillers
+    guessers
     examples

@@ -35,6 +35,11 @@ class Field
     const TYPE_VALUE = 32;
 
     /**
+     * Generate a value by asking for one from a callback function.
+     */
+    const TYPE_CALLBACK = 64;
+
+    /**
      * The name of the field.
      * @var string|int
      */
@@ -95,6 +100,11 @@ class Field
      * @var array
      */
     private $selection;
+
+    /**
+     * @var callback
+     */
+    private $callback;
 
     /**
      * @param string|int $name
@@ -193,60 +203,20 @@ class Field
     }
 
     /**
+     * @return callback
+     */
+    public function getCallback()
+    {
+        return $this->callback;
+    }
+
+    /**
      * @param int $type
      * @return bool
      */
     public function isType($type)
     {
         return $this->type === $type;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isNone()
-    {
-        return $this->isType(self::TYPE_NONE);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isFake()
-    {
-        return $this->isType(self::TYPE_FAKE);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRelation()
-    {
-        return $this->isType(self::TYPE_RELATION);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSelect()
-    {
-        return $this->isType(self::TYPE_SELECT);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isValue()
-    {
-        return $this->isType(self::TYPE_VALUE);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLink()
-    {
-        return $this->isType(self::TYPE_LINK);
     }
 
     /**
@@ -312,6 +282,17 @@ class Field
     {
         $this->type = self::TYPE_LINK;
         $this->link_target = $target;
+        return $this;
+    }
+
+    /**
+     * @param callback $callback
+     * @return $this
+     */
+    public function setCallback($callback)
+    {
+        $this->type = self::TYPE_CALLBACK;
+        $this->callback = $callback;
         return $this;
     }
 

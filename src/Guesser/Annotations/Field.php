@@ -1,6 +1,6 @@
 <?php
 
-namespace Bravesheep\Dogmatist\Filler\Annotations;
+namespace Bravesheep\Dogmatist\Guesser\Annotations;
 
 use Doctrine\Common\Annotations\Annotation\Required;
 
@@ -11,14 +11,14 @@ use Doctrine\Common\Annotations\Annotation\Required;
 class Field implements AnnotationInterface
 {
     /**
-     * @var \Bravesheep\Dogmatist\Filler\Annotations\FieldInterface
+     * @var \Bravesheep\Dogmatist\Guesser\Annotations\FieldInterface
      *
      * @Required
      */
     public $type;
 
     /**
-     * @var \Bravesheep\Dogmatist\Filler\Annotations\QuantityInterface
+     * @var \Bravesheep\Dogmatist\Guesser\Annotations\QuantityInterface
      */
     public $count;
 

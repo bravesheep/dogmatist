@@ -6,7 +6,7 @@ use jit\Interceptor;
 
 Filter::register('doctrine.exclude.annotations', function ($chain) {
     $extra = [
-        'Doctrine\\Common\\Annotations\\Annotation'
+        'Doctrine\\Common\\Annotations\\Annotation',
     ];
 
     $exclude = $this->args()->get('exclude');

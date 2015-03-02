@@ -1,18 +1,18 @@
 <?php
 
-namespace Bravesheep\Dogmatist\Filler;
+namespace Bravesheep\Dogmatist\Guesser;
 
 use Bravesheep\Dogmatist\Builder;
 
-class ChainedFiller implements FillerInterface
+class ChainedGuesser implements GuesserInterface
 {
     /**
-     * @var FillerInterface[]
+     * @var GuesserInterface[]
      */
     private $fillers = [];
 
     /**
-     * @param FillerInterface[] $fillers
+     * @param GuesserInterface[] $fillers
      */
     public function __construct(array $fillers = [])
     {
@@ -22,10 +22,10 @@ class ChainedFiller implements FillerInterface
     }
 
     /**
-     * @param FillerInterface $filler
+     * @param GuesserInterface $filler
      * @return $this
      */
-    public function addFiller(FillerInterface $filler)
+    public function addFiller(GuesserInterface $filler)
     {
         $this->fillers[] = $filler;
         return $this;
@@ -42,7 +42,7 @@ class ChainedFiller implements FillerInterface
     }
 
     /**
-     * @return FillerInterface[]
+     * @return GuesserInterface[]
      */
     public function getFillers()
     {

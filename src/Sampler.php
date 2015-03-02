@@ -48,11 +48,11 @@ class Sampler
         $data = [];
         $faker = $this->dogmatist->getFaker();
         foreach ($builder->getFields() as $field) {
-            if (!$field->isNone()) {
+            if (!$field->isType(Field::TYPE_NONE)) {
                 $n = $field->isSingular() ? 1 : $faker->numberBetween($field->getMin(), $field->getMax());
                 $samples = [];
                 for ($i = 0; $i < $n; $i++) {
-                    $samples[] = $this->sampleField($field);
+                    $samples[] = $this->sampleField($field, $data);
                 }
 
                 if ($field->isSingular()) {
@@ -72,11 +72,13 @@ class Sampler
     }
 
     /**
-     * @param Field $field
+     * @param Field   $field
+     * @param array   $data
+     * @param Builder $builder
      * @return mixed
      * @throws SampleException
      */
-    private function sampleField(Field $field)
+    private function sampleField(Field $field, array $data)
     {
         $faker = $this->dogmatist->getFaker();
         $type = $field->getType();
@@ -95,11 +97,13 @@ class Sampler
         } elseif (Field::TYPE_LINK === $type) {
             $samples = $this->dogmatist->getLinkManager()->samples($field->getLinkTarget());
             $value = $faker->randomElement($samples);
-        }
-
-        if (null === $value) {
+        } elseif (Field::TYPE_CALLBACK === $type) {
+            $callback = $field->getCallback();
+            $value = $callback($data, $this->dogmatist);
+        } else {
             throw new SampleException("Could not generate data for field of type {$field->getType()}");
         }
+
         return $value;
     }
 

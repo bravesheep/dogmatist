@@ -2,7 +2,7 @@
 
 use Bravesheep\Dogmatist\Factory;
 use Bravesheep\Dogmatist\Field;
-use Bravesheep\Dogmatist\Filler\AnnotationFiller;
+use Bravesheep\Dogmatist\Guesser\AnnotationGuesser;
 use Bravesheep\Spec\Annotated\FakedFieldTest;
 use Bravesheep\Spec\Annotated\FieldAnnotatedTest;
 use Bravesheep\Spec\Annotated\MissingClassAnnotationTest;
@@ -15,14 +15,14 @@ use Bravesheep\Spec\Annotated\WithConstructorTest;
 use kahlan\plugin\Stub;
 
 
-describe("AnnotationFiller", function () {
+describe("AnnotationGuesser", function () {
     beforeEach(function () {
-        $this->filler = new AnnotationFiller();
+        $this->filler = new AnnotationGuesser();
         $this->dogmatist = Factory::create(\Faker\Factory::DEFAULT_LOCALE, $this->filler);
     });
 
     it("should be inserted in dogmatist", function () {
-        expect($this->dogmatist->getFiller())->toBe($this->filler);
+        expect($this->dogmatist->getGuesser())->toBe($this->filler);
     });
 
     it("should create the properties for the constructor", function () {

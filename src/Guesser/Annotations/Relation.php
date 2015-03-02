@@ -1,6 +1,6 @@
 <?php
 
-namespace Bravesheep\Dogmatist\Filler\Annotations;
+namespace Bravesheep\Dogmatist\Guesser\Annotations;
 
 use Doctrine\Common\Annotations\Annotation\Required;
 
@@ -17,7 +17,7 @@ class Relation implements FieldInterface
     public $type;
 
     /**
-     * @var \Bravesheep\Dogmatist\Filler\Annotations\Description
+     * @var \Bravesheep\Dogmatist\Guesser\Annotations\Description
      * @Required()
      */
     public $description;
