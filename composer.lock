@@ -726,12 +726,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/crysalead/box.git",
-                "reference": "d88c57da9091909c0109a679916cb9294f5e5eaa"
+                "reference": "08ba6cc873044326489eaef5638ee4d85354913a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/crysalead/box/zipball/d88c57da9091909c0109a679916cb9294f5e5eaa",
-                "reference": "d88c57da9091909c0109a679916cb9294f5e5eaa",
+                "url": "https://api.github.com/repos/crysalead/box/zipball/08ba6cc873044326489eaef5638ee4d85354913a",
+                "reference": "08ba6cc873044326489eaef5638ee4d85354913a",
                 "shasum": ""
             },
             "require": {
@@ -761,7 +761,7 @@
                 "inversion of control",
                 "ioc"
             ],
-            "time": "2014-12-07 00:39:07"
+            "time": "2015-03-02 21:38:58"
         },
         {
             "name": "crysalead/dir",
@@ -855,12 +855,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/crysalead/jit.git",
-                "reference": "87362a68bbfb6912446e5aad557d16aa306c62cb"
+                "reference": "8a6378918a432d260bb4d1b0713dbd954121caed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/crysalead/jit/zipball/87362a68bbfb6912446e5aad557d16aa306c62cb",
-                "reference": "87362a68bbfb6912446e5aad557d16aa306c62cb",
+                "url": "https://api.github.com/repos/crysalead/jit/zipball/8a6378918a432d260bb4d1b0713dbd954121caed",
+                "reference": "8a6378918a432d260bb4d1b0713dbd954121caed",
                 "shasum": ""
             },
             "require": {
@@ -885,7 +885,7 @@
                 "Code Patcher",
                 "jit"
             ],
-            "time": "2015-02-25 18:41:59"
+            "time": "2015-03-02 21:56:03"
         },
         {
             "name": "crysalead/kahlan",
@@ -893,12 +893,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/crysalead/kahlan.git",
-                "reference": "5667810c94507a478fbed84a29adf0783bebb2fd"
+                "reference": "84f1c522a56dff24d7b259ac0edf5c53e25a7b3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/crysalead/kahlan/zipball/5667810c94507a478fbed84a29adf0783bebb2fd",
-                "reference": "5667810c94507a478fbed84a29adf0783bebb2fd",
+                "url": "https://api.github.com/repos/crysalead/kahlan/zipball/84f1c522a56dff24d7b259ac0edf5c53e25a7b3c",
+                "reference": "84f1c522a56dff24d7b259ac0edf5c53e25a7b3c",
                 "shasum": ""
             },
             "require": {
@@ -943,7 +943,7 @@
                 "testing",
                 "unit test"
             ],
-            "time": "2015-02-25 18:38:56"
+            "time": "2015-02-28 22:54:26"
         },
         {
             "name": "crysalead/set",
