@@ -16,3 +16,7 @@ after_success:
 env:
     global:
         - secure: NGNE28+3Lc3ewjVlDnUY473VzvkTzk5JshS2AV6R/UCS/Vk1tSgCCOgCnK20T5mwtzC7H+a+Wkt+rM/J1eicbIXssMPcKK/Sonwak/0cNHVLP5b+D+Uv541OaatpJu3hh1z15CdvoFFSZoiic3aZQJG8XGXW5dSX4rdxeC0PsF4=
+
+matrix:
+    allow_failures:
+        - php: hhvm

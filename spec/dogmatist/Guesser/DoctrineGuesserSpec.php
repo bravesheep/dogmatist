@@ -24,6 +24,7 @@ describe("DoctrineGuesser", function () {
     beforeEach(function () {
         $this->registry = Stub::create([
             'extends' => AbstractManagerRegistry::class,
+            'methods' => [],
             'params' => [null, [], [], null, null, null]
         ]);
         Stub::on($this->registry)->method('getManagerForClass')->andReturn($this->em);

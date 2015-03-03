@@ -49,9 +49,9 @@ class Sampler
         $faker = $this->dogmatist->getFaker();
         foreach ($builder->getFields() as $field) {
             if (!$field->isType(Field::TYPE_NONE)) {
-                $n = $field->isSingular() ? 1 : $faker->numberBetween($field->getMin(), $field->getMax());
+                $generate = $field->isSingular() ? 1 : $faker->numberBetween($field->getMin(), $field->getMax());
                 $samples = [];
-                for ($i = 0; $i < $n; $i++) {
+                for ($i = 0; $i < $generate; $i++) {
                     $samples[] = $this->sampleField($field, $data);
                 }
 
@@ -167,9 +167,6 @@ class Sampler
                 $obj = $refl->newInstance();
             } elseif ($builder->hasConstructor()) {
                 $args = $this->alignArgs($constructor, $this->sample($builder->constructor()), $builder->constructor());
-                if (count($args) < $constructor->getNumberOfRequiredParameters()) {
-                    throw new SampleException("Not enough arguments provided for constructing the object");
-                }
                 $obj = $refl->newInstanceArgs($args);
             }
         }
@@ -207,6 +204,11 @@ class Sampler
                 }
             }
         }
+
+        if (count($aligned) < $constructor->getNumberOfRequiredParameters()) {
+            throw new SampleException("Not enough arguments provided for constructing the object");
+        }
+
         return $aligned;
     }
 }
