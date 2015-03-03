@@ -3,9 +3,11 @@
 namespace Bravesheep\Dogmatist\Guesser;
 
 use Bravesheep\Dogmatist\Builder;
+use Bravesheep\Dogmatist\Dogmatist;
 use Bravesheep\Dogmatist\Util;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\Mapping\MappingException;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 class DoctrineGuesser implements GuesserInterface
 {
@@ -21,27 +23,29 @@ class DoctrineGuesser implements GuesserInterface
 
     public function fill(Builder $builder)
     {
+        $em = null;
         if (Util::isUserClass($builder->getClass())) {
             $em = $this->registry->getManagerForClass($builder->getClass());
             if (null !== $em) {
-                $metadata = $em->getClassMetadata($builder->getClass());
-                if ($metadata instanceof \Doctrine\ORM\Mapping\ClassMetadata) {
-                    $this->processFull($metadata, $builder);
-                } else {
-                    $this->processBasic($metadata, $builder);
+                try {
+                    $metadata = $em->getClassMetadata($builder->getClass());
+                    if ($metadata instanceof ClassMetadata) {
+                        $this->process($metadata, $builder);
+                    }
+                } catch (MappingException $e) {
                 }
-
             }
         }
     }
 
-    private function processFull(\Doctrine\ORM\Mapping\ClassMetadata $metadata, Builder $builder)
+    private function process(ClassMetadata $metadata, Builder $builder)
     {
         foreach ($metadata->getFieldNames() as $fname) {
             if ($metadata->isIdentifier($fname)) {
                 $builder->none($fname);
             } else {
-                $type = $metadata->getTypeOfField($fname);
+                $mapping = $metadata->fieldMappings[$fname];
+                $this->makeField($mapping, $builder);
             }
         }
 
@@ -50,18 +54,51 @@ class DoctrineGuesser implements GuesserInterface
         }
     }
 
-    private function processBasic(ClassMetadata $metadata, Builder $builder)
+    private function makeField(array $mapping, Builder $builder)
     {
-        foreach ($metadata->getFieldNames() as $fname) {
-            if ($metadata->isIdentifier($fname)) {
-                $builder->none($fname);
-            } else {
-                $type = $metadata->getTypeOfField($fname);
-            }
-        }
-
-        foreach ($metadata->getAssociationNames() as $aname) {
-
+        $field = $mapping['fieldName'];
+        switch ($mapping['type']) {
+            case 'string':
+                $length = isset($mapping['length']) && is_int($mapping['length']) ? $mapping['length'] : 255;
+                $builder->fake($field, 'text', [$length]);
+                break;
+            case 'integer':
+            case 'bigint':
+                $builder->fake($field, 'randomNumber');
+                break;
+            case 'smallint':
+                $builder->fake($field, 'numberBetween', [0, 65535]);
+                break;
+            case 'boolean':
+                $builder->fake($field, 'boolean');
+                break;
+            case 'decimal':
+                $precision = isset($mapping['precision']) ? $mapping['precision'] : 2;
+                $builder->callback($field, function ($data, Dogmatist $dogmatist) use ($precision) {
+                    return $dogmatist->getFaker()->randomNumber($precision + 2) / 100;
+                });
+                break;
+            case 'date':
+            case 'time':
+            case 'datetime':
+                $builder->fake($field, 'datetime');
+                break;
+            case 'datetimetz':
+                $builder->callback($field, function ($data, Dogmatist $dogmatist) {
+                    $date = $dogmatist->getFaker()->dateTime;
+                    $tz = $dogmatist->getFaker()->timezone;
+                    return $date->setTimezone(new \DateTimeZone($tz));
+                });
+                break;
+            case 'text':
+                $builder->fake($field, 'text');
+                break;
+            case 'float':
+                $builder->fake($field, 'randomFloat');
+                break;
+            case 'guid':
+                $builder->fake($field, 'uuid');
+                break;
         }
     }
 }
