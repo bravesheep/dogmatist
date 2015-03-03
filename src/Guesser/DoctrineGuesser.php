@@ -23,12 +23,12 @@ class DoctrineGuesser implements GuesserInterface
 
     public function fill(Builder $builder)
     {
-        $em = null;
+        $manager = null;
         if (Util::isUserClass($builder->getClass())) {
-            $em = $this->registry->getManagerForClass($builder->getClass());
-            if (null !== $em) {
+            $manager = $this->registry->getManagerForClass($builder->getClass());
+            if (null !== $manager) {
                 try {
-                    $metadata = $em->getClassMetadata($builder->getClass());
+                    $metadata = $manager->getClassMetadata($builder->getClass());
                     if ($metadata instanceof ClassMetadata) {
                         $this->process($metadata, $builder);
                     }
@@ -43,14 +43,10 @@ class DoctrineGuesser implements GuesserInterface
         foreach ($metadata->getFieldNames() as $fname) {
             if ($metadata->isIdentifier($fname)) {
                 $builder->none($fname);
-            } else {
+            } elseif (!$builder->has($fname)) {
                 $mapping = $metadata->fieldMappings[$fname];
                 $this->makeField($mapping, $builder);
             }
-        }
-
-        foreach ($metadata->getAssociationNames() as $aname) {
-
         }
     }
 

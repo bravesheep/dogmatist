@@ -23,19 +23,14 @@ class TypeResolver
         'text' => [Field::TYPE_FAKE, false, ['text']],
         'title' => [Field::TYPE_FAKE, false, ['sentence']],
         'name' => [Field::TYPE_FAKE, false, ['name']],
-        'first_name' => [Field::TYPE_FAKE, false, ['firstName']],
         'firstname' => [Field::TYPE_FAKE, false, ['firstName']],
-        'last_name' => [Field::TYPE_FAKE, false, ['lastName']],
         'lastname' => [Field::TYPE_FAKE, false, ['lastName']],
         'phone' => [Field::TYPE_FAKE, false, ['phoneNumber']],
-        'phone_number' => [Field::TYPE_FAKE, false, ['phoneNumber']],
         'phonenumber' => [Field::TYPE_FAKE, false, ['phoneNumber']],
         'address' => [Field::TYPE_FAKE, false, ['streetAddress']],
-        'street_address' => [Field::TYPE_FAKE, false, ['streetAddress']],
         'streetaddress' => [Field::TYPE_FAKE, false, ['streetAddress']],
         'city' => [Field::TYPE_FAKE, false, ['city']],
         'country' => [Field::TYPE_FAKE, false, ['country']],
-        'building_number' => [Field::TYPE_FAKE, false, ['buildingNumber']],
         'buildingnumber' => [Field::TYPE_FAKE, false, ['buildingNumber']],
         'zipcode' => [Field::TYPE_FAKE, false, ['postcode']],
         'postcode' => [Field::TYPE_FAKE, false, ['postcode']],
@@ -54,10 +49,8 @@ class TypeResolver
         'slug' => [Field::TYPE_FAKE, false, ['slug']],
         'ipaddress' => [Field::TYPE_FAKE, false, ['ipv4']],
         'ip' => [Field::TYPE_FAKE, false, ['ipv4']],
-        'user_agent' => [Field::TYPE_FAKE, false, ['userAgent']],
         'useragent' => [Field::TYPE_FAKE, false, ['userAgent']],
         'ua' => [Field::TYPE_FAKE, false, ['userAgent']],
-        'credit_card' => [Field::TYPE_FAKE, false, ['creditCardNumber']],
         'creditcard' => [Field::TYPE_FAKE, false, ['creditCardNumber']],
         'color' => [Field::TYPE_FAKE, false, ['hexcolor']],
         'colour' => [Field::TYPE_FAKE, false, ['hexcolor']],
@@ -101,10 +94,15 @@ class TypeResolver
     public static function resolve($type)
     {
         $name = Util::normalizeName($type);
-        if (preg_match("/^(is|has)_/", $name) === 1) {
-            return [Field::TYPE_FAKE, false, ['boolean']];
-        } elseif (isset(self::$mappings[$name])) {
+        if (isset(self::$mappings[$name])) {
             return self::$mappings[$name];
+        } elseif (preg_match("/^(is|has)_/", $name) === 1) {
+            return [Field::TYPE_FAKE, false, ['boolean']];
+        } elseif (preg_match("/_at$/", $name) === 1) {
+            return [Field::TYPE_FAKE, false, ['dateTime']];
+        } elseif (false !== strpos($name, '_')) {
+            $name = str_replace('_', '', $name);
+            return self::resolve($name);
         } else {
             return false;
         }

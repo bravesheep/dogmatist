@@ -131,11 +131,20 @@ class Builder
     public function get($field)
     {
         $this->checkState($field);
-        if (!isset($this->fields[$field])) {
+        if (!$this->has($field)) {
             $this->fields[$field] = new Field($field);
         }
 
         return $this->fields[$field];
+    }
+
+    /**
+     * @param string|int $field
+     * @return bool
+     */
+    public function has($field)
+    {
+        return isset($this->fields[$field]);
     }
 
     /**

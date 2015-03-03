@@ -27,4 +27,16 @@ describe("TypeResolver", function () {
         expect(TypeResolver::resolve('isTrue'))->toBe([Field::TYPE_FAKE, false, ['boolean']]);
         expect(TypeResolver::resolve('has_value'))->toBe([Field::TYPE_FAKE, false, ['boolean']]);
     });
+
+    it("should resolve types ending in at to be datetimes", function () {
+        expect(TypeResolver::resolve("updatedAt"))->toBe([Field::TYPE_FAKE, false, ['dateTime']]);
+        expect(TypeResolver::resolve("created_at"))->toBe([Field::TYPE_FAKE, false, ['dateTime']]);
+        expect(TypeResolver::resolve("updatedat"))->toBe(false);
+    });
+
+    it("should resolve different styles of first name to the same type", function () {
+        expect(TypeResolver::resolve('firstname'))->toBe([Field::TYPE_FAKE, false, ['firstName']]);
+        expect(TypeResolver::resolve('first_name'))->toBe([Field::TYPE_FAKE, false, ['firstName']]);
+        expect(TypeResolver::resolve('firstName'))->toBe([Field::TYPE_FAKE, false, ['firstName']]);
+    });
 });

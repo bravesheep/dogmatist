@@ -4,14 +4,20 @@ use Bravesheep\Dogmatist\Builder;
 use Bravesheep\Dogmatist\Exception\BuilderException;
 use Bravesheep\Dogmatist\Factory;
 use Bravesheep\Dogmatist\Field;
+use Bravesheep\Dogmatist\Guesser\NoneGuesser;
 
 describe("Builder", function () {
     before(function () {
-        $this->dogmatist = Factory::create();
+        $this->dogmatist = Factory::create(\Faker\Factory::DEFAULT_LOCALE, new NoneGuesser());
     });
 
     beforeEach(function () {
         $this->builder = new Builder('object', $this->dogmatist);
+    });
+
+    it("should have a field defined", function () {
+        $this->builder->fake('example', 'number');
+        expect($this->builder->has('example'))->toBe(true);
     });
 
     it("should create a faked field", function () {
@@ -131,5 +137,9 @@ describe("Builder", function () {
         $this->builder->setStrict(false);
         expect($this->builder->constructor()->isStrict())->toBe(false);
         expect($this->builder->get('example')->getRelated()->isStrict())->toBe(false);
+    });
+
+    it("should not have a field that was never defined", function () {
+        expect($this->builder->has('field_not_used'))->toBe(false);
     });
 });
