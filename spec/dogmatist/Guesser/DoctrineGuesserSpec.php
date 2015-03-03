@@ -65,7 +65,7 @@ describe("DoctrineGuesser", function () {
 
         expect($sample->getDatetime())->toBeAnInstanceOf(\DateTime::class);
         expect($sample->getDatetimetz())->toBeAnInstanceOf(\DateTime::class);
-        expect($sample->getDecimal())->toBeA('float');
+        expect(is_numeric($sample->getDecimal()))->toBe(true);
         expect($sample->getString())->toBeA('string');
     });
 

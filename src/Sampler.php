@@ -189,18 +189,18 @@ class Sampler
     private function alignArgs(\ReflectionMethod $constructor, array $data, ConstructorBuilder $builder)
     {
         if ($builder->isPositional()) {
-            return $data;
-        }
-
-        $aligned = [];
-        foreach ($constructor->getParameters() as $param) {
-            if (isset($data[$param->getName()])) {
-                $aligned[] = $data[$param->getName()];
-            } else {
-                try {
-                    $aligned[] = $param->getDefaultValue();
-                } catch (\ReflectionException $e) {
-                    throw new SampleException("No value provided for argument {$param->getName()}", 0, $e);
+            $aligned = $data;
+        } else {
+            $aligned = [];
+            foreach ($constructor->getParameters() as $param) {
+                if (isset($data[$param->getName()])) {
+                    $aligned[] = $data[$param->getName()];
+                } else {
+                    try {
+                        $aligned[] = $param->getDefaultValue();
+                    } catch (\ReflectionException $e) {
+                        throw new SampleException("No value provided for argument {$param->getName()}", 0, $e);
+                    }
                 }
             }
         }
