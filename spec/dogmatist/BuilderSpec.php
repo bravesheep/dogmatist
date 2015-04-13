@@ -151,6 +151,29 @@ describe("Builder", function () {
         expect($field->isUnique())->toBe(true);
     });
 
+    it("should take the previously accessed field for withUnique", function () {
+        $this->builder->fake('example', 'number')->withUnique();
+        $field = $this->builder->get('example');
+
+        expect($field->isUnique())->toBe(true);
+    });
+
+    it("should take the previously accessed field for withSingle", function () {
+        $this->builder->fake('example', 'number')->withSingle();
+        $field = $this->builder->get('example');
+
+        expect($field->isSingular())->toBe(true);
+    });
+
+    it("should take the previously accessed field for withMultiple", function () {
+        $this->builder->fake('example', 'number')->withMultiple(1, 5);
+        $field = $this->builder->get('example');
+
+        expect($field->isMultiple())->toBe(true);
+        expect($field->getMin())->toBe(1);
+        expect($field->getMax())->toBe(5);
+    });
+
     it("should remove uniqueness from a field", function () {
         $this->builder->fake('example', 'number');
         $this->builder->unique('example');

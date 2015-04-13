@@ -166,10 +166,10 @@ field can either generate an array of values or just a single value. By default
 all fields will be singular, but using the following two methods you can change
 this behavior:
 
-``singular(field)``
+``singe(field)``
     Sets a field to only produce a single value when a sample is generated.
 
-``multiple(field, min, max)``
+``multiple(field[, min, max])``
     Sets a field to produce at least min and at most max values. These values
     are combined as an array. If an add method is provided however, the results
     will be inserted one item at a time into the field. If no such method
@@ -185,6 +185,21 @@ method:
     When called will mark a field for uniqueness if called with one argument,
     otherwise a boolean may be provided as the second argument indicating the
     uniqueness of the field.
+
+For the ``single``, ``multiple`` and ``unique`` calls you will often want to
+apply these functions to the field you have just created. In order to help you
+with this use case you can use these methods in camel-cased variants prefixed
+with ``with`` to access the previously created field:
+
+``withSingle()``
+    Mark the previously accessed field as singular.
+
+``withMultiple([min, max])``
+    Mark the previously accessed field as multiple with the specified min and
+    max.
+
+``withUnique([uniqueness]``
+    Mark the field as being unique.
 
 .. _constructor:
 

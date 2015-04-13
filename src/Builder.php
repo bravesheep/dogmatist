@@ -8,6 +8,9 @@ use Bravesheep\Dogmatist\Exception\BuilderException;
  */
 class Builder
 {
+    const DEFAULT_MIN = 0;
+    const DEFAULT_MAX = 10;
+
     /**
      * @var string
      */
@@ -42,6 +45,11 @@ class Builder
      * @var ConstructorBuilder|null
      */
     private $constr;
+
+    /**
+     * @var string|int
+     */
+    private $last_field;
 
     /**
      * @param string    $class
@@ -135,6 +143,7 @@ class Builder
             $this->fields[$field] = new Field($field);
         }
 
+        $this->last_field = $field;
         return $this->fields[$field];
     }
 
@@ -164,7 +173,7 @@ class Builder
      * @param int        $max
      * @return $this
      */
-    public function multiple($field, $min = 0, $max = 10)
+    public function multiple($field, $min = self::DEFAULT_MIN, $max = self::DEFAULT_MAX)
     {
         $field = $this->get($field);
         $field->setMultiple($min, $max);
@@ -272,7 +281,41 @@ class Builder
         return $this;
     }
 
+    /**
+     * @param bool $unique
+     * @return $this
+     */
+    public function withUnique($unique = true)
+    {
+        if ($this->has($this->last_field)) {
+            $this->unique($this->last_field, $unique);
+        }
+        return $this;
+    }
 
+    /**
+     * @return $this
+     */
+    public function withSingle()
+    {
+        if ($this->has($this->last_field)) {
+            $this->single($this->last_field);
+        }
+        return $this;
+    }
+
+    /**
+     * @param int $min
+     * @param int $max
+     * @return $this
+     */
+    public function withMultiple($min = self::DEFAULT_MIN, $max = self::DEFAULT_MAX)
+    {
+        if ($this->has($this->last_field)) {
+            $this->multiple($this->last_field, $min, $max);
+        }
+        return $this;
+    }
 
     /**
      * Return the parent Builder instance, or if there is no parent return the
