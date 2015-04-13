@@ -175,6 +175,17 @@ this behavior:
     will be inserted one item at a time into the field. If no such method
     exists then the value will be inserted directly.
 
+Every field can be set to generate only unique values. By the default the
+sampler will try a limited number of times to try and generate a unique value.
+If that proves to be impossible within that limit, the sampler will fail to
+generate a new value. To mark a field for uniqueness, you can use the following
+method:
+
+``unique(field[, uniqueness])``
+    When called will mark a field for uniqueness if called with one argument,
+    otherwise a boolean may be provided as the second argument indicating the
+    uniqueness of the field.
+
 .. _constructor:
 
 Describing the constructor
