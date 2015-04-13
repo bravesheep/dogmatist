@@ -142,4 +142,21 @@ describe("Builder", function () {
     it("should not have a field that was never defined", function () {
         expect($this->builder->has('field_not_used'))->toBe(false);
     });
+
+    it("should create a unique field", function () {
+        $this->builder->fake('example', 'number');
+        $this->builder->unique('example');
+        $field = $this->builder->get('example');
+
+        expect($field->isUnique())->toBe(true);
+    });
+
+    it("should remove uniqueness from a field", function () {
+        $this->builder->fake('example', 'number');
+        $this->builder->unique('example');
+        $this->builder->unique('example', false);
+        $field = $this->builder->get('example');
+
+        expect($field->isUnique())->toBe(false);
+    });
 });

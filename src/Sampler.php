@@ -18,10 +18,22 @@ class Sampler
      */
     private $accessor;
 
-    public function __construct(Dogmatist $dogmatist, PropertyAccessorInterface $accessor)
+    /**
+     * @var int
+     */
+    private $unique_tries;
+
+    /**
+     * @var array
+     */
+    private $sampled;
+
+    public function __construct(Dogmatist $dogmatist, PropertyAccessorInterface $accessor, $unique_tries = 128)
     {
         $this->dogmatist = $dogmatist;
         $this->accessor = $accessor;
+        $this->unique_tries = $unique_tries;
+        $this->sampled = [];
     }
 
     /**
@@ -52,7 +64,12 @@ class Sampler
                 $generate = $field->isSingular() ? 1 : $faker->numberBetween($field->getMin(), $field->getMax());
                 $samples = [];
                 for ($i = 0; $i < $generate; $i++) {
-                    $samples[] = $this->sampleField($field, $data);
+                    if ($field->isUnique()) {
+                        $samples[] = $this->sampleUniqueField($field, $data);
+                    } else {
+                        $samples[] = $this->sampleField($field, $data);
+                    }
+
                 }
 
                 if ($field->isSingular()) {
@@ -69,6 +86,38 @@ class Sampler
         }
 
         return $result;
+    }
+
+    /**
+     * @param Field   $field
+     * @param array   $data
+     * @param Builder $builder
+     * @return mixed
+     * @throws SampleException
+     */
+    private function sampleUniqueField(Field $field, array $data)
+    {
+        // create a generation store for unique values
+        $id = spl_object_hash($field);
+        if (!isset($this->sampled[$id])) {
+            $this->sampled[$id] = [];
+        }
+
+        // try to iteratively generate a unique value
+        $rounds = 0;
+        do {
+            if ($rounds === $this->unique_tries) {
+                throw new SampleException("Tried to get unique value for field, but none could be generated");
+            }
+
+            $value = $this->sampleField($field, $data);
+            $rounds += 1;
+        } while (in_array($value, $this->sampled[$id], true));
+
+        // store the generated value for later testing
+        $this->sampled[$id][] = $value;
+
+        return $value;
     }
 
     /**

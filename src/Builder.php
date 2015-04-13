@@ -261,6 +261,20 @@ class Builder
     }
 
     /**
+     * @param string $field
+     * @param bool   $unique
+     * @return $this
+     */
+    public function unique($field, $unique = true)
+    {
+        $field = $this->get($field);
+        $field->setUnique($unique);
+        return $this;
+    }
+
+
+
+    /**
      * Return the parent Builder instance, or if there is no parent return the
      * attached Dogmatist instance.
      * @return Builder|Dogmatist

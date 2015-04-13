@@ -107,6 +107,11 @@ class Field
     private $callback;
 
     /**
+     * @var bool
+     */
+    private $unique;
+
+    /**
      * @param string|int $name
      */
     public function __construct($name)
@@ -318,5 +323,23 @@ class Field
         $this->min = $min;
         $this->max = $max;
         return $this;
+    }
+
+    /**
+     * @param bool $unique
+     * @return $this
+     */
+    public function setUnique($unique = true)
+    {
+        $this->unique = $unique;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUnique()
+    {
+        return $this->unique;
     }
 }

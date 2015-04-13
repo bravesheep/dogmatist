@@ -55,6 +55,22 @@ describe("Sampler", function () {
         expect($samples)->toHaveLength(10);
     });
 
+    it("should generate unique samples", function () {
+        $builder = $this->dogmatist->create('object')->select('test', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])->unique('test');
+        $samples = array_map(function ($obj) { return $obj->test; }, $this->sampler->samples($builder, 10));
+        sort($samples);
+
+        expect($samples)->toBe([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    });
+
+    it("should not be able to generate unique examples when impossible", function () {
+        $task = function () {
+            $builder = $this->dogmatist->create('object')->select('test', [1, 2, 3])->unique('test');
+            $this->sampler->samples($builder, 5);
+        };
+        expect($task)->toThrow(new SampleException());
+    });
+
     it("should fail when trying to sample using a non-existant type in faker", function () {
         $task = function() {
             $builder = $this->dogmatist->create('object')->fake('number', 'a_nonexistant_generator');
