@@ -145,7 +145,9 @@ are described below:
 
 ``link(field, value)``
     You can link one builder to another builder using this method. For a better
-    description you should take a look at the section on saved builders.
+    description you should take a look at the section on saved builders. Note
+    that you can also specify an array of linked builders, in which case one
+    will be selected randomly for each sample created.
 
 ``relation(field, type)``
     This is the most complicated of all the available functions. The relation
@@ -227,5 +229,24 @@ use the ``isPositional()`` method on the constructor builder.
 
 .. note:: You cannot mix positional and named arguments in the constructor. If
           you try to do this, you will get a ``BuilderException``.
+
+.. _relations:
+
+Relating back to the parent object
+----------------------------------
+When creating a sub-builder using the ``relation()`` method, you can specify a
+field that should be updated with the parent object. To do this, use these
+special builder methods:
+
+``linkParent(field)``
+    Will insert the parent object in the specified field.
+
+``hasLinkWithParent()``
+    Returns whether or not this builder wants to create a link to the parent.
+
+``getLinkParent()``
+    Retrieves the field into which the parent should be inserted.
+
+.. note:: Inserting the parent also works with ``stdClass`` objects and arrays.
 
 .. _Faker: https://github.com/fzaninotto/Faker
