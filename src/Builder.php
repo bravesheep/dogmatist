@@ -52,6 +52,11 @@ class Builder
     private $last_field;
 
     /**
+     * @var string|int
+     */
+    private $link_parent;
+
+    /**
      * @param string    $class
      * @param Dogmatist $dogmatist
      * @param Builder   $parent
@@ -246,8 +251,8 @@ class Builder
     }
 
     /**
-     * @param string|int $field
-     * @param string     $target
+     * @param string|int   $field
+     * @param string|array $target
      * @return $this
      */
     public function link($field, $target)
@@ -279,6 +284,33 @@ class Builder
         $field = $this->get($field);
         $field->setUnique($unique);
         return $this;
+    }
+
+    /**
+     * @param string|int $field
+     * @return $this
+     */
+    public function linkParent($field)
+    {
+        $this->link_parent = $field;
+
+        return $this;
+    }
+
+    /**
+     * @return string|int
+     */
+    public function getLinkParent()
+    {
+        return $this->link_parent;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasLinkWithParent()
+    {
+        return $this->link_parent !== null;
     }
 
     /**

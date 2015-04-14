@@ -102,6 +102,13 @@ describe("Sampler", function () {
             expect($sample->number->number)->toBeA('integer');
         });
 
+        it("should work with multiple linked builders", function () {
+            $builder = $this->dogmatist->create('object')->link('test', ['numbered', 'linked']);
+
+            $sample = $this->sampler->sample($builder);
+            expect($sample->test->number instanceof \stdClass || is_int($sample->test->number))->toBe(true);
+        });
+
         it("should retrieve multiple objects from a multiple relation", function () {
             $this->builder2->get('number')->setMultiple(2, 5);
             $sample = $this->sampler->sample($this->builder2);
@@ -167,6 +174,97 @@ describe("Sampler", function () {
         });
         $sample = $this->sampler->sample($builder);
         expect($received)->toBe($sample);
+    });
 
+    describe("updating links back to parents", function () {
+        it("should update links in objects back to the parent array", function () {
+            $builder = $this->dogmatist->create('array')
+                ->relation('object', 'object')
+                ->linkParent('arr')
+                ->done();
+
+            $sample = $this->sampler->sample($builder);
+            expect($sample['object']->arr)->toBe($sample);
+        });
+
+        it("should update links in objects back to the parent object", function () {
+            $builder = $this->dogmatist->create('object')
+                ->relation('obj', 'object')
+                ->linkParent('o')
+                ->done();
+
+            $sample = $this->sampler->sample($builder);
+            expect($sample->obj->o)->toBe($sample);
+        });
+
+        it("should update links in objects back to the parent class", function () {
+            $builder = $this->dogmatist->create(Example::class)
+                ->relation('pub', 'object')
+                    ->linkParent('c')
+                ->done();
+
+            $sample = $this->sampler->sample($builder);
+            expect($sample->pub->c)->toBe($sample);
+        });
+
+        it("should update links in arrays back to the parent array", function () {
+            $builder = $this->dogmatist->create('array')
+                ->relation('arr', 'array')
+                    ->linkParent('a')
+                ->done();
+
+            $sample = $this->sampler->sample($builder);
+            expect($sample['arr']['a'])->toBe($sample);
+        });
+
+        it("should update links in arrays back to the parent object", function () {
+            $builder = $this->dogmatist->create('object')
+                ->relation('arr', 'array')
+                    ->linkParent('o')
+                ->done();
+
+            $sample = $this->sampler->sample($builder);
+            expect($sample->arr['o'])->toBe($sample);
+        });
+
+        it("should update links in arrays back to the parent class", function () {
+            $builder = $this->dogmatist->create(Example::class)
+                ->relation('pub', 'array')
+                    ->linkParent('c')
+                ->done();
+
+            $sample = $this->sampler->sample($builder);
+            expect($sample->pub['c'])->toBe($sample);
+        });
+
+        it("should update links in classes back to the parent array", function () {
+            $builder = $this->dogmatist->create('array')
+                ->relation('pub', Example::class)
+                    ->linkParent('pub')
+                ->done();
+
+            $sample = $this->sampler->sample($builder);
+            expect($sample['pub']->pub)->toBe($sample);
+        });
+
+        it("should update links in classes back to the parent object", function () {
+            $builder = $this->dogmatist->create('object')
+                ->relation('pub', Example::class)
+                    ->linkParent('pub')
+                ->done();
+
+            $sample = $this->sampler->sample($builder);
+            expect($sample->pub->pub)->toBe($sample);
+        });
+
+        it("should update links in classes back to the parent class", function () {
+            $builder = $this->dogmatist->create(Example::class)
+                ->relation('pub', Example::class)
+                    ->linkParent('pub')
+                ->done();
+
+            $sample = $this->sampler->sample($builder);
+            expect($sample->pub->pub)->toBe($sample);
+        });
     });
 });

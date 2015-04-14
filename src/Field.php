@@ -73,7 +73,7 @@ class Field
     /**
      * The target stored inside the linkmanager from which the value should be copied.
      * @see LinkManager
-     * @var string
+     * @var string|array
      */
     private $link_target;
 
@@ -200,7 +200,7 @@ class Field
     }
 
     /**
-     * @return string
+     * @return string|array
      */
     public function getLinkTarget()
     {
@@ -280,7 +280,7 @@ class Field
     }
 
     /**
-     * @param string $target
+     * @param string|array $target
      * @return $this
      */
     public function setLink($target)

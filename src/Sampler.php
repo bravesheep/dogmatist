@@ -142,9 +142,17 @@ class Sampler
         } elseif (Field::TYPE_VALUE === $type || Field::TYPE_SELECT === $type) {
             $value = $faker->randomElement($field->getSelection());
         } elseif (Field::TYPE_RELATION === $type) {
-            $value = $this->sample($field->getRelated());
+            $related = $field->getRelated();
+            $value = $this->sample($related);
+            if ($related->hasLinkWithParent()) {
+                $value = new ReplacableLink($value, $related->getLinkParent());
+            }
         } elseif (Field::TYPE_LINK === $type) {
-            $samples = $this->dogmatist->getLinkManager()->samples($field->getLinkTarget());
+            $target = $field->getLinkTarget();
+            if (is_array($target)) {
+                $target = $faker->randomElement($target);
+            }
+            $samples = $this->dogmatist->getLinkManager()->samples($target);
             $value = $faker->randomElement($samples);
         } elseif (Field::TYPE_CALLBACK === $type) {
             $callback = $field->getCallback();
@@ -166,32 +174,89 @@ class Sampler
     {
         // special case for arrays: just return the array data
         if ($builder->getClass() === 'array' || $builder->getClass() === '__construct') {
-            return $data;
+            return $this->replaceLinksInArray($data, $builder);
         }
 
         // special case for generic objects (objects of type stdClass): just cast as an object
         if ($builder->getClass() === 'object' || $builder->getClass() === 'stdClass') {
-            return (object) $data;
+            return $this->replaceLinksInObject((object) $data, $builder);
         }
 
         $refl = new \ReflectionClass($builder->getClass());
         $obj = $this->constructObject($refl, $builder);
 
         foreach ($data as $key => $val) {
-            try {
-                $this->accessor->setValue($obj, $key, $val);
-            } catch (NoSuchPropertyException $e) {
-                if ($builder->isStrict()) {
-                    throw new SampleException("Could not set value", 0, $e);
+            $this->setObjectProperty($obj, $key, $val, $builder);
+        }
+
+        return $obj;
+    }
+
+    /**
+     * @param array   $data
+     * @param Builder $builder
+     * @return array
+     * @throws SampleException
+     */
+    private function replaceLinksInArray(array $data, Builder $builder)
+    {
+        foreach ($data as $key => &$value) {
+            if ($value instanceof ReplacableLink) {
+                $value = $this->setObjectProperty($value->value, $value->field, $data, $builder);
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * @param object  $obj
+     * @param Builder $builder
+     * @return object
+     * @throws SampleException
+     */
+    private function replaceLinksInObject($obj, Builder $builder)
+    {
+        foreach (get_object_vars($obj) as $key => $value) {
+            if ($value instanceof ReplacableLink) {
+                $obj->$key = $this->setObjectProperty($value->value, $value->field, $obj, $builder);
+            }
+        }
+        return $obj;
+    }
+
+    /**
+     * @param object|array     $obj
+     * @param string|int       $key
+     * @param mixed            $value
+     * @param \ReflectionClass $refl
+     * @param Builder          $builder
+     * @return object|array
+     * @throws SampleException
+     */
+    private function setObjectProperty($obj, $key, $value, Builder $builder)
+    {
+        if ($value instanceof ReplacableLink) {
+            $value = $this->setObjectProperty($value->value, $value->field, $obj, $builder);
+        }
+
+        try {
+            $this->accessor->setValue($obj, $key, $value);
+        } catch (NoSuchPropertyException $e) {
+            if (is_array($obj)) {
+                $obj[$key] = $value;
+            } elseif ($obj instanceof \stdClass) {
+                $obj->$key = $value;
+            } elseif ($builder->isStrict()) {
+                throw new SampleException("Could not set value", 0, $e);
+            } else {
+                $refl = new \ReflectionClass($builder->getClass());
+                if ($refl->hasProperty($key)) {
+                    $prop = $refl->getProperty($key);
+                    $prop->setAccessible(true);
+                    $prop->setValue($obj, $value);
+                    $prop->setAccessible(false);
                 } else {
-                    if ($refl->hasProperty($key)) {
-                        $prop = $refl->getProperty($key);
-                        $prop->setAccessible(true);
-                        $prop->setValue($obj, $val);
-                        $prop->setAccessible(false);
-                    } else {
-                        $obj->{$key} = $val;
-                    }
+                    $obj->{$key} = $value;
                 }
             }
         }

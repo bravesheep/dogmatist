@@ -67,6 +67,7 @@ describe("Builder", function () {
         expect($field->getRelated())->toBe($other);
         expect($other->getClass())->toBe('array');
         expect($other->done())->toBe($this->builder);
+        expect($other->hasLinkWithParent())->toBe(false);
     });
 
     it("should create a link to another builder", function () {
@@ -181,5 +182,12 @@ describe("Builder", function () {
         $field = $this->builder->get('example');
 
         expect($field->isUnique())->toBe(false);
+    });
+
+    it("should be possible to set a link back to a parent for relations", function () {
+        $other = $this->builder->relation('example', 'array')->linkParent('test');
+
+        expect($other->hasLinkWithParent())->toBe(true);
+        expect($other->getLinkParent())->toBe('test');
     });
 });
