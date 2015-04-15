@@ -190,4 +190,84 @@ describe("Builder", function () {
         expect($other->hasLinkWithParent())->toBe(true);
         expect($other->getLinkParent())->toBe('test');
     });
+
+    it("should not be possible to create a link back to the parent in the constructor builder", function () {
+        $task = function () {
+            $this->builder->constructor()->linkParent('blaat');
+        };
+        expect($task)->toThrow(new BuilderException());
+    });
+
+    it("should not be possible to create a link back to the parent in an argument of the constructor", function () {
+        $task = function () {
+            $this->builder->constructor()->argRelation('object')->linkParent('blaat');
+        };
+        expect($task)->toThrow(new BuilderException());
+    });
+
+    it("should not be possible to create a link back to the parent in a root builder", function () {
+        $task = function () {
+            $this->builder->linkParent('blaat');
+        };
+        expect($task)->toThrow(new BuilderException());
+    });
+
+    it("should create a new constructor builder", function () {
+        $constr = $this->builder->constructor()->argFake('number');
+        $other = $this->builder->constructor(true)->argFake('number');
+
+        expect($other)->not->toBe($constr);
+    });
+
+    describe("cloning the builder", function () {
+        it("should create a clone of the builder", function () {
+            $clone = $this->builder->copy();
+            expect($clone)->not->toBe($this->builder);
+        });
+
+        it("should clone all fields of a builder", function () {
+            $callback = function ($a, $b) { return 'a'; };
+
+            /** @var Builder $builder */
+            $builder = $this->builder;
+            $builder
+                ->fake('fake', 'number')
+                ->callback('callback', $callback)
+                ->value('value', 'value')
+                ->select('select', [1, 2])
+                ->link('link', 'other');
+
+            $clone = $builder->copy();
+            expect($clone->get('fake')->getFakedType())->toBe('number');
+            expect($clone->get('callback')->getCallback())->toBe($callback);
+            expect($clone->get('value')->getSelection())->toBe(['value']);
+            expect($clone->get('select')->getSelection())->toBe([1, 2]);
+            expect($clone->get('link')->getLinkTarget())->toBe('other');
+        });
+
+        it("should clone a related builder and update the parent", function () {
+            $this->builder->relation('rel', 'object')->fake('faked', 'randomNumber')->done();
+            $clone = $this->builder->copy();
+
+            expect($clone->get('rel')->getRelated()->done())->toBe($clone);
+            expect($clone->get('rel')->getRelated()->done())->not->toBe($this->builder);
+        });
+
+        it("should set the new copy type when requested", function () {
+            $builder = $this->dogmatist->create('object')->copy('array');
+            expect($builder->getType())->toBe('array');
+        });
+
+        it("should not change the copy type when not set", function () {
+            $builder = $this->dogmatist->create('object')->copy();
+            expect($builder->getType())->toBe('object');
+        });
+
+        it("should copy and update the constructor builder", function () {
+            $original = $this->dogmatist->create('object')->constructor()->argFake('randomNumber')->done();
+            $builder = $original->copy();
+            expect($builder->constructor()->done())->toBe($builder);
+            expect($builder->constructor())->not->toBe($original->constructor());
+        });
+    });
 });

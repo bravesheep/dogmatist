@@ -118,7 +118,7 @@ class ConstructorBuilder extends Builder
     /**
      * {@inheritdoc}
      */
-    public function constructor()
+    public function constructor($new = false)
     {
         throw new BuilderException("Cannot create constructor for constructor");
     }

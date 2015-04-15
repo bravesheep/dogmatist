@@ -211,4 +211,15 @@ class Dogmatist
     {
         return $this->getLinkManager()->retrieve($name);
     }
+
+    /**
+     * Retrieve a cloned copy of the specified builder.
+     * @param string $name
+     * @param string $type The new type of the cloned builder.
+     * @return Builder
+     */
+    public function copy($name, $type = null)
+    {
+        return $this->retrieve($name)->copy($type);
+    }
 }

@@ -88,6 +88,20 @@ describe("Dogmatist", function () {
             expect($sample)->not->toBe($new_sample);
         });
 
+        it("should clone a saved builder", function () {
+            $this->dogmatist->create('array')->fake('item', 'randomNumber')->save('example', 1);
+            $clone = $this->dogmatist->copy('example');
+            expect($clone)->not->toBe($this->dogmatist->retrieve('example'));
+            expect($clone)->toBeAnInstanceOf(Builder::class);
+        });
+
+        it("should clone a saved builder with another type", function () {
+            $this->dogmatist->create('array')->fake('item', 'randomNumber')->save('example', 1);
+            $clone = $this->dogmatist->copy('example', 'object');
+            expect($clone->getType())->toBe('object');
+            expect($this->dogmatist->retrieve('example')->getType())->toBe('array');
+        });
+
         describe("working with unlimited samples", function () {
             beforeEach(function () {
                 $this->unlimited_builder = $this->dogmatist->create('object')

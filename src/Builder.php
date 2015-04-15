@@ -14,7 +14,7 @@ class Builder
     /**
      * @var string
      */
-    private $class;
+    private $type;
 
     /**
      * @var Dogmatist
@@ -57,14 +57,14 @@ class Builder
     private $link_parent;
 
     /**
-     * @param string    $class
+     * @param string    $type
      * @param Dogmatist $dogmatist
      * @param Builder   $parent
      * @param bool      $strict
      */
-    public function __construct($class, Dogmatist $dogmatist, Builder $parent = null, $strict = true)
+    public function __construct($type, Dogmatist $dogmatist, Builder $parent = null, $strict = true)
     {
-        $this->class = $class;
+        $this->type = $type;
         $this->dogmatist = $dogmatist;
         $this->parent = $parent;
         $this->strict = $strict;
@@ -98,11 +98,12 @@ class Builder
     }
 
     /**
+     * @param bool $new If true and a constructor already exists, it will be discarded and a new one will be created.
      * @return ConstructorBuilder
      */
-    public function constructor()
+    public function constructor($new = false)
     {
-        if (null === $this->constr) {
+        if (null === $this->constr || $new === true) {
             $this->constr = new ConstructorBuilder($this->dogmatist, $this);
         }
         return $this->constr;
@@ -292,6 +293,18 @@ class Builder
      */
     public function linkParent($field)
     {
+        if ($this->parent instanceof ConstructorBuilder) {
+            throw new BuilderException("Cannot link to parent when the parent is a constructor");
+        }
+
+        if ($this->parent === null) {
+            throw new BuilderException("There is no parent to link back to");
+        }
+
+        if ($this instanceof ConstructorBuilder) {
+            throw new BuilderException("Cannot link back to the parent inside the constructor");
+        }
+
         $this->link_parent = $field;
 
         return $this;
@@ -387,10 +400,32 @@ class Builder
     /**
      * Retrieve the type of objects this builder should generate samples for.
      * @return string
+     * @deprecated
      */
     public function getClass()
     {
-        return $this->class;
+        return $this->type;
+    }
+
+    /**
+     * Retrieve the type of objects this builder should generate samples for.
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set the type of objects this builder should generate samples for.
+     * @param string $type
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
     /**
@@ -413,5 +448,37 @@ class Builder
     public function getListeners()
     {
         return $this->listeners;
+    }
+
+    /**
+     * Returns a clone for the current builder
+     * @param string $type The new type of the cloned builder.
+     * @return $this
+     */
+    public function copy($type = null)
+    {
+        $builder = new Builder($this->type, $this->dogmatist, $this->parent, $this->strict);
+        foreach ($this->fields as $field) {
+            $new = clone $field;
+            if ($new->isType(Field::TYPE_RELATION)) {
+
+                $new->getRelated()->setParent($builder);
+            }
+            $builder->fields[$new->getName()] = $new;
+        }
+
+        $builder->listeners = $this->listeners;
+        if ($this->constr !== null) {
+            $builder->constr = clone $this->constr;
+            $builder->constr->setParent($builder);
+        }
+
+        $builder->link_parent = $this->link_parent;
+
+        if ($type !== null) {
+            $builder->setType($type);
+        }
+
+        return $builder;
     }
 }

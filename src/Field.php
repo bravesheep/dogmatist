@@ -342,4 +342,27 @@ class Field
     {
         return $this->unique;
     }
+
+    /**
+     * @return Field
+     */
+    public function __clone()
+    {
+        $field = new Field($this->name);
+        $field->type = $this->type;
+        $field->multiple = $this->multiple;
+        $field->faked_type = $this->faked_type;
+        $field->faked_options = $this->faked_options;
+        $field->link_target = $this->link_target;
+        $field->min = $this->min;
+        $field->max = $this->max;
+        if ($this->related !== null) {
+            $field->related = $this->related->copy();
+        }
+        $field->selection = $this->selection;
+        $field->callback = $this->callback;
+        $field->unique = $this->unique;
+
+        return $field;
+    }
 }
