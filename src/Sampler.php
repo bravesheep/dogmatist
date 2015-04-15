@@ -63,29 +63,41 @@ class Sampler
             if (!$field->isType(Field::TYPE_NONE)) {
                 $generate = $field->isSingular() ? 1 : $faker->numberBetween($field->getMin(), $field->getMax());
                 $samples = [];
+                $mark = false;
+
                 for ($i = 0; $i < $generate; $i++) {
                     if ($field->isUnique()) {
-                        $samples[] = $this->sampleUniqueField($field, $data);
+                        $val = $this->sampleUniqueField($field, $data);
                     } else {
-                        $samples[] = $this->sampleField($field, $data);
+                        $val = $this->sampleField($field, $data);
                     }
 
+                    if ($val instanceof ReplacableLink) {
+                        $mark = true;
+                    }
+                    $samples[] = $val;
                 }
 
                 if ($field->isSingular()) {
                     $samples = $samples[0];
+                } elseif ($mark) {
+                    $samples = new ReplacableArray($samples);
                 }
+
                 $data[$field->getName()] = $samples;
             }
         }
 
-        $result = $this->insertInObject($data, $builder);
+        if ($builder instanceof ConstructorBuilder) {
+            return $data;
+        } else {
+            $result = $this->insertInObject($data, $builder);
+            foreach ($builder->getListeners() as $listener) {
+                call_user_func($listener, $result);
+            }
 
-        foreach ($builder->getListeners() as $listener) {
-            call_user_func($listener, $result);
+            return $result;
         }
-
-        return $result;
     }
 
     /**
@@ -152,8 +164,13 @@ class Sampler
             if (is_array($target)) {
                 $target = $faker->randomElement($target);
             }
-            $samples = $this->dogmatist->getLinkManager()->samples($target);
-            $value = $faker->randomElement($samples);
+
+            if ($this->dogmatist->getLinkManager()->hasUnlimitedSamples($target)) {
+                $value = $this->dogmatist->sample($target);
+            } else {
+                $samples = $this->dogmatist->getLinkManager()->samples($target);
+                $value = $faker->randomElement($samples);
+            }
         } elseif (Field::TYPE_CALLBACK === $type) {
             $callback = $field->getCallback();
             $value = $callback($data, $this->dogmatist);
@@ -201,6 +218,13 @@ class Sampler
     private function replaceLinksInArray(array $data, Builder $builder)
     {
         foreach ($data as $key => &$value) {
+            if ($value instanceof ReplacableArray) {
+                foreach ($value->data as &$subval) {
+                    $subval = $this->setObjectProperty($subval->value, $subval->field, $data, $builder);
+                }
+                $value = $value->data;
+            }
+
             if ($value instanceof ReplacableLink) {
                 $value = $this->setObjectProperty($value->value, $value->field, $data, $builder);
             }
@@ -217,6 +241,14 @@ class Sampler
     private function replaceLinksInObject($obj, Builder $builder)
     {
         foreach (get_object_vars($obj) as $key => $value) {
+            if ($value instanceof ReplacableArray) {
+                foreach ($value->data as &$subval) {
+                    $subval = $this->setObjectProperty($subval->value, $subval->field, $obj, $builder);
+                }
+                $value = $value->data;
+                $obj->$key = $value;
+            }
+
             if ($value instanceof ReplacableLink) {
                 $obj->$key = $this->setObjectProperty($value->value, $value->field, $obj, $builder);
             }
@@ -235,6 +267,13 @@ class Sampler
      */
     private function setObjectProperty($obj, $key, $value, Builder $builder)
     {
+        if ($value instanceof ReplacableArray) {
+            foreach ($value->data as &$subval) {
+                $subval = $this->setObjectProperty($subval->value, $subval->field, $obj, $builder);
+            }
+            $value = $value->data;
+        }
+
         if ($value instanceof ReplacableLink) {
             $value = $this->setObjectProperty($value->value, $value->field, $obj, $builder);
         }
@@ -247,7 +286,8 @@ class Sampler
             } elseif ($obj instanceof \stdClass) {
                 $obj->$key = $value;
             } elseif ($builder->isStrict()) {
-                throw new SampleException("Could not set value", 0, $e);
+                $type = get_class($obj);
+                throw new SampleException("Could not set value for '{$key}' in object of type '{$type}'", 0, $e);
             } else {
                 $refl = new \ReflectionClass($builder->getClass());
                 if ($refl->hasProperty($key)) {

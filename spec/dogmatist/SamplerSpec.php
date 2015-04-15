@@ -114,6 +114,14 @@ describe("Sampler", function () {
             $sample = $this->sampler->sample($this->builder2);
             expect($sample->number)->toBeA('array');
         });
+
+        it("should retrieve items from linked builders with unlimited samples", function () {
+            $this->dogmatist->create('object')->fake('number', 'randomNumber')->save('unlimited');
+            $referencing = $this->dogmatist->create('object')->link('unlimited', 'unlimited');
+
+            $sample = $this->sampler->sample($referencing);
+            expect($sample->unlimited->number)->toBeA('int');
+        });
     });
 
     describe("working with classes", function () {
@@ -265,6 +273,36 @@ describe("Sampler", function () {
 
             $sample = $this->sampler->sample($builder);
             expect($sample->pub->pub)->toBe($sample);
+        });
+
+        it("should update links inside a multiple field back to the parent class", function () {
+            $builder = $this->dogmatist->create(Example::class)
+                ->relation('pub', Example::class)
+                    ->linkParent('pub')
+                ->done()->withMultiple(1, 1);
+
+            $sample = $this->sampler->sample($builder);
+            expect($sample->pub[0]->pub)->toBe($sample);
+        });
+
+        it("should update links inside a multiple field back to the parent array", function () {
+            $builder = $this->dogmatist->create('array')
+                ->relation('pub', Example::class)
+                    ->linkParent('pub')
+                ->done()->withMultiple(1, 1);
+
+            $sample = $this->sampler->sample($builder);
+            expect($sample['pub'][0]->pub)->toBe($sample);
+        });
+
+        it("should update links inside a multiple field back to the parent object", function () {
+            $builder = $this->dogmatist->create('object')
+                ->relation('pub', Example::class)
+                    ->linkParent('pub')
+                ->done()->withMultiple(1, 1);
+
+            $sample = $this->sampler->sample($builder);
+            expect($sample->pub[0]->pub)->toBe($sample);
         });
     });
 });
