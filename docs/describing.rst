@@ -91,7 +91,7 @@ A Builder instance has some methods to manipulate and retrieve its state:
     Retrieves the fields that have been defined for this builder. You can read
     more about fields `in the section below <#fields>`__.
 
-``getClass()``
+``getType()``
     Retrieves the type name for which this Builder will generate samples.
 
 ``onCreate(callback)``
@@ -102,6 +102,15 @@ A Builder instance has some methods to manipulate and retrieve its state:
 ``getListeners()``
     Retrieve a list of callbacks that should be called when a new samples is
     created.
+
+``copy([type])``
+    Creates a deep copy of the builder, if the specified type is given, the
+    type of the builder will be adjusted to the new type.
+
+``setType(type)``
+    Set a new type for the builder. The builder is then configured for
+    constructing objects of that type. Note that you still have to make sure
+    all fields are available.
 
 .. _fields:
 
