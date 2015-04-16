@@ -184,6 +184,16 @@ describe("Sampler", function () {
         expect($received)->toBe($sample);
     });
 
+    it("should generate unique links only within a single instance", function () {
+        $task = function () {
+            $this->dogmatist->create('object')->fake('num', 'randomNumber')->save('a', 10);
+            $builder = $this->dogmatist->create('object')->link('nums', 'a')->withMultiple(2)->withUnique();
+
+            $this->sampler->samples($builder, 10);
+        };
+        expect($task)->not->toThrow(new SampleException());
+    });
+
     describe("updating links back to parents", function () {
         it("should update links in objects back to the parent array", function () {
             $builder = $this->dogmatist->create('array')

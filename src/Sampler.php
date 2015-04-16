@@ -57,7 +57,7 @@ class Sampler
      */
     public function sample(Builder $builder)
     {
-        $data = [];
+        $data = new UniqueArrayObject();
         $faker = $this->dogmatist->getFaker();
         foreach ($builder->getFields() as $field) {
             if (!$field->isType(Field::TYPE_NONE)) {
@@ -89,9 +89,9 @@ class Sampler
         }
 
         if ($builder instanceof ConstructorBuilder) {
-            return $data;
+            return $data->getArrayCopy();
         } else {
-            $result = $this->insertInObject($data, $builder);
+            $result = $this->insertInObject($data->getArrayCopy(), $builder);
             foreach ($builder->getListeners() as $listener) {
                 call_user_func($listener, $result);
             }
@@ -101,16 +101,23 @@ class Sampler
     }
 
     /**
-     * @param Field   $field
-     * @param array   $data
-     * @param Builder $builder
+     * @param Field             $field
+     * @param UniqueArrayObject $data
+     * @param Builder           $builder
      * @return mixed
      * @throws SampleException
      */
-    private function sampleUniqueField(Field $field, array $data, Builder $builder)
+    private function sampleUniqueField(Field $field, UniqueArrayObject $data, Builder $builder)
     {
         // create a generation store for unique values
-        $id = spl_object_hash($field);
+        if ($field->isType(Field::TYPE_LINK)) {
+            // For links we only want uniqueness within the current object
+            // For unique relations with other objects across all samples a relation should be used.
+            $id = spl_object_hash($field) . $data->getId();
+        } else {
+            $id = spl_object_hash($field);
+        }
+
         if (!isset($this->sampled[$id])) {
             $this->sampled[$id] = [];
         }
@@ -137,13 +144,12 @@ class Sampler
     }
 
     /**
-     * @param Field   $field
-     * @param array   $data
-     * @param Builder $builder
+     * @param Field             $field
+     * @param UniqueArrayObject $data
      * @return mixed
      * @throws SampleException
      */
-    private function sampleField(Field $field, array $data)
+    private function sampleField(Field $field, UniqueArrayObject $data)
     {
         $faker = $this->dogmatist->getFaker();
         $type = $field->getType();
