@@ -15,7 +15,7 @@ You can find the documentation in the `docs/` directory, or online at
 
 ## Requirements
 
-* PHP 5.5+
+* PHP 5.4+
 * Composer
 
 ## Installation
