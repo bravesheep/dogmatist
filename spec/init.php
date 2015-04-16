@@ -21,5 +21,13 @@ Filter::register('doctrine.annotations.autoloader', function ($chain) {
     return $chain->next();
 });
 
+Filter::register('mockery.register.close', function ($chain) {
+    $this->suite()->afterEach(function () {
+        \Mockery::close();
+    });
+    return $chain->next();
+});
+
+Filter::apply($this, 'run', 'mockery.register.close');
 Filter::apply($this, 'interceptor', 'doctrine.exclude.annotations');
 Filter::apply($this, 'run', 'doctrine.annotations.autoloader');

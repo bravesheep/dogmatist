@@ -7,7 +7,6 @@ use Bravesheep\Spec\Entity\BasicFieldTest;
 use Doctrine\Common\Persistence\AbstractManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
-use kahlan\plugin\Stub;
 
 describe("DoctrineGuesser", function () {
     before(function () {
@@ -22,12 +21,8 @@ describe("DoctrineGuesser", function () {
     });
 
     beforeEach(function () {
-        $this->registry = Stub::create([
-            'extends' => 'Doctrine\Common\Persistence\AbstractManagerRegistry',
-            'methods' => [],
-            'params' => [null, [], [], null, null, null]
-        ]);
-        Stub::on($this->registry)->method('getManagerForClass')->andReturn($this->em);
+        $this->registry = Mockery::mock('Doctrine\Common\Persistence\AbstractManagerRegistry');
+        $this->registry->shouldReceive('getManagerForClass')->andReturn($this->em);
 
         $this->filler = new DoctrineGuesser($this->registry);
         $this->dogmatist = Factory::create(\Faker\Factory::DEFAULT_LOCALE, $this->filler);
@@ -70,10 +65,12 @@ describe("DoctrineGuesser", function () {
     });
 
     it("should be constructable with a manager registry", function () {
-        $filler = new DoctrineGuesser($this->registry);
+        $registry = Mockery::mock('Doctrine\Common\Persistence\AbstractManagerRegistry');
+        $registry->shouldReceive('getManagerForClass')->with('example')->once()->andReturn($this->em);
+
+        $filler = new DoctrineGuesser($registry);
         $dogmatist = Factory::create(\Faker\Factory::DEFAULT_LOCALE, $filler);
 
-        expect($this->registry)->toReceive('getManagerForClass')->with('example');
         $dogmatist->create('example');
     });
 });

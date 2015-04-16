@@ -3,8 +3,6 @@
 use Bravesheep\Dogmatist\Factory;
 use Bravesheep\Dogmatist\Field;
 use Bravesheep\Dogmatist\Guesser\AnnotationGuesser;
-use kahlan\plugin\Stub;
-
 
 describe("AnnotationGuesser", function () {
     beforeEach(function () {

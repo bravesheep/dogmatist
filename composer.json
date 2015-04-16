@@ -9,7 +9,8 @@
         "doctrine/annotations": "~1.2"
     },
     "require-dev": {
-        "crysalead/kahlan": "~1.0"
+        "crysalead/kahlan": "~1.0",
+        "mockery/mockery": "~0.9"
     },
     "license": "MIT",
     "authors": [
