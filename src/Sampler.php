@@ -67,7 +67,7 @@ class Sampler
 
                 for ($i = 0; $i < $generate; $i++) {
                     if ($field->isUnique()) {
-                        $val = $this->sampleUniqueField($field, $data);
+                        $val = $this->sampleUniqueField($field, $data, $builder);
                     } else {
                         $val = $this->sampleField($field, $data);
                     }
@@ -107,7 +107,7 @@ class Sampler
      * @return mixed
      * @throws SampleException
      */
-    private function sampleUniqueField(Field $field, array $data)
+    private function sampleUniqueField(Field $field, array $data, Builder $builder)
     {
         // create a generation store for unique values
         $id = spl_object_hash($field);
@@ -119,7 +119,11 @@ class Sampler
         $rounds = 0;
         do {
             if ($rounds === $this->unique_tries) {
-                throw new SampleException("Tried to get unique value for field, but none could be generated");
+                $name = $field->getName();
+                $type = $builder->getType();
+                throw new SampleException(
+                    "Tried to get unique value for field {$name} in {$type}, but none could be generated"
+                );
             }
 
             $value = $this->sampleField($field, $data);
