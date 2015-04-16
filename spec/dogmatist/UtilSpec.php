@@ -1,6 +1,5 @@
 <?php
 
-use Bravesheep\Dogmatist\Dogmatist;
 use Bravesheep\Dogmatist\Util;
 
 describe("Util", function () {
@@ -25,13 +24,13 @@ describe("Util", function () {
         });
 
         it("does not return true for user classes", function () {
-            expect(Util::isSystemClass(Dogmatist::class))->toBe(false);
+            expect(Util::isSystemClass('Bravesheep\Dogmatist\Dogmatist'))->toBe(false);
         });
     });
 
     describe("::isUserClass", function () {
         it("checks whether an identifier is not a system class", function () {
-            expect(Util::isUserClass(Dogmatist::class))->toBe(true);
+            expect(Util::isUserClass('Bravesheep\Dogmatist\Dogmatist'))->toBe(true);
         });
 
         it("returns false for objects and arrays", function () {

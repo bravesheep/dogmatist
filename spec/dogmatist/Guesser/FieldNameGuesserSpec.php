@@ -5,9 +5,6 @@ use Bravesheep\Dogmatist\Factory;
 use Bravesheep\Dogmatist\Field;
 use Bravesheep\Dogmatist\Guesser\FieldNameGuesser;
 use Bravesheep\Dogmatist\Guesser\TypeResolver;
-use Bravesheep\Spec\Named\InaccessibleTest;
-use Bravesheep\Spec\Named\NamedTest;
-use Bravesheep\Spec\Named\NonExistantTypeTest;
 
 describe("FieldNameGuesser", function () {
     beforeEach(function () {
@@ -29,7 +26,7 @@ describe("FieldNameGuesser", function () {
         ]);
 
         /** @var Builder $builder */
-        $builder = $this->dogmatist->create(NamedTest::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\Named\NamedTest');
 
         expect($builder->getFields())->toHaveLength(9);
         expect($builder->get('addresses')->getFakedType())->toBe('streetAddress');
@@ -46,7 +43,7 @@ describe("FieldNameGuesser", function () {
 
     it("should not map an unknown field type", function () {
         /** @var Builder $builder */
-        $builder = $this->dogmatist->create(NonExistantTypeTest::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\Named\NonExistantTypeTest');
 
         expect($builder->getFields())->toHaveLength(0);
         expect($builder->has('propertyWithoutType'))->toBe(false);
@@ -54,7 +51,7 @@ describe("FieldNameGuesser", function () {
 
     it("should not map a non-accessible field", function () {
         /** @var Builder $builder */
-        $builder = $this->dogmatist->create(InaccessibleTest::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\Named\InaccessibleTest');
 
         expect($builder->getFields())->toHaveLength(0);
         expect($builder->has('firstname'))->toBe(false);

@@ -2,7 +2,7 @@
     "name": "bravesheep/dogmatist",
     "description": "A generator for Doctrine2 ORM entities",
     "require": {
-        "php": "~5.5",
+        "php": "~5.4",
         "doctrine/orm": "~2.4",
         "fzaninotto/faker": "~1.4",
         "symfony/property-access": "~2.6",

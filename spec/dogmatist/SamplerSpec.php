@@ -2,9 +2,6 @@
 
 use Bravesheep\Dogmatist\Exception\SampleException;
 use Bravesheep\Dogmatist\Factory;
-use Bravesheep\Dogmatist\Field;
-use Bravesheep\Spec\Example;
-
 
 describe("Sampler", function () {
     beforeEach(function () {
@@ -83,7 +80,7 @@ describe("Sampler", function () {
         $task = function() {
             $builder = $this->dogmatist->create('object');
             $field = $builder->get('number');
-            $prop = new ReflectionProperty(Field::class, 'type');
+            $prop = new ReflectionProperty('Bravesheep\Dogmatist\Field', 'type');
             $prop->setAccessible(true);
             $prop->setValue($field, PHP_INT_MAX);
             $this->sampler->sample($builder);
@@ -126,13 +123,13 @@ describe("Sampler", function () {
 
     describe("working with classes", function () {
         it("should properly assign a public property", function () {
-            $builder = $this->dogmatist->create(Example::class)->fake('pub', 'randomNumber');
+            $builder = $this->dogmatist->create('Bravesheep\Spec\Example')->fake('pub', 'randomNumber');
             $sample = $this->sampler->sample($builder);
             expect($sample->pub)->toBeA('integer');
         });
 
         it("should be able to assign to a private property with setter access", function () {
-            $builder = $this->dogmatist->create(Example::class)->fake('priv_pub', 'randomNumber');
+            $builder = $this->dogmatist->create('Bravesheep\Spec\Example')->fake('priv_pub', 'randomNumber');
             $sample = $this->sampler->sample($builder);
             expect($sample->getPrivPub())->toBeA('integer');
         });
@@ -140,7 +137,7 @@ describe("Sampler", function () {
         describe("in strict mode", function () {
             it("should not be able to assign to a non-accessible property", function () {
                 $task = function () {
-                    $builder = $this->dogmatist->create(Example::class)->fake('priv_priv', 'randomNumber');
+                    $builder = $this->dogmatist->create('Bravesheep\Spec\Example')->fake('priv_priv', 'randomNumber');
                     $this->sampler->sample($builder);
                 };
                 expect($task)->toThrow(new SampleException());
@@ -148,7 +145,7 @@ describe("Sampler", function () {
 
             it("should not be able to assign to a non-existing property", function () {
                 $task = function () {
-                    $builder = $this->dogmatist->create(Example::class)->fake('fake', 'randomNumber');
+                    $builder = $this->dogmatist->create('Bravesheep\Spec\Example')->fake('fake', 'randomNumber');
                     $this->sampler->sample($builder);
                 };
                 expect($task)->toThrow(new SampleException());
@@ -157,7 +154,7 @@ describe("Sampler", function () {
 
         describe("in non-strict mode", function () {
             it("should assign to a non-accessible property", function () {
-                $builder = $this->dogmatist->create(Example::class)
+                $builder = $this->dogmatist->create('Bravesheep\Spec\Example')
                     ->fake('priv_priv', 'randomNumber')
                     ->setStrict(false);
                 $sample = $this->sampler->sample($builder);
@@ -165,7 +162,7 @@ describe("Sampler", function () {
             });
 
             it("should assign to a non-existing property", function () {
-                $builder = $this->dogmatist->create(Example::class)
+                $builder = $this->dogmatist->create('Bravesheep\Spec\Example')
                     ->fake('fake', 'randomNumber')
                     ->setStrict(false);
                 $sample = $this->sampler->sample($builder);
@@ -216,7 +213,7 @@ describe("Sampler", function () {
         });
 
         it("should update links in objects back to the parent class", function () {
-            $builder = $this->dogmatist->create(Example::class)
+            $builder = $this->dogmatist->create('Bravesheep\Spec\Example')
                 ->relation('pub', 'object')
                     ->linkParent('c')
                 ->done();
@@ -246,7 +243,7 @@ describe("Sampler", function () {
         });
 
         it("should update links in arrays back to the parent class", function () {
-            $builder = $this->dogmatist->create(Example::class)
+            $builder = $this->dogmatist->create('Bravesheep\Spec\Example')
                 ->relation('pub', 'array')
                     ->linkParent('c')
                 ->done();
@@ -257,7 +254,7 @@ describe("Sampler", function () {
 
         it("should update links in classes back to the parent array", function () {
             $builder = $this->dogmatist->create('array')
-                ->relation('pub', Example::class)
+                ->relation('pub', 'Bravesheep\Spec\Example')
                     ->linkParent('pub')
                 ->done();
 
@@ -267,7 +264,7 @@ describe("Sampler", function () {
 
         it("should update links in classes back to the parent object", function () {
             $builder = $this->dogmatist->create('object')
-                ->relation('pub', Example::class)
+                ->relation('pub', 'Bravesheep\Spec\Example')
                     ->linkParent('pub')
                 ->done();
 
@@ -276,8 +273,8 @@ describe("Sampler", function () {
         });
 
         it("should update links in classes back to the parent class", function () {
-            $builder = $this->dogmatist->create(Example::class)
-                ->relation('pub', Example::class)
+            $builder = $this->dogmatist->create('Bravesheep\Spec\Example')
+                ->relation('pub', 'Bravesheep\Spec\Example')
                     ->linkParent('pub')
                 ->done();
 
@@ -286,8 +283,8 @@ describe("Sampler", function () {
         });
 
         it("should update links inside a multiple field back to the parent class", function () {
-            $builder = $this->dogmatist->create(Example::class)
-                ->relation('pub', Example::class)
+            $builder = $this->dogmatist->create('Bravesheep\Spec\Example')
+                ->relation('pub', 'Bravesheep\Spec\Example')
                     ->linkParent('pub')
                 ->done()->withMultiple(1, 1);
 
@@ -297,7 +294,7 @@ describe("Sampler", function () {
 
         it("should update links inside a multiple field back to the parent array", function () {
             $builder = $this->dogmatist->create('array')
-                ->relation('pub', Example::class)
+                ->relation('pub', 'Bravesheep\Spec\Example')
                     ->linkParent('pub')
                 ->done()->withMultiple(1, 1);
 
@@ -307,7 +304,7 @@ describe("Sampler", function () {
 
         it("should update links inside a multiple field back to the parent object", function () {
             $builder = $this->dogmatist->create('object')
-                ->relation('pub', Example::class)
+                ->relation('pub', 'Bravesheep\Spec\Example')
                     ->linkParent('pub')
                 ->done()->withMultiple(1, 1);
 

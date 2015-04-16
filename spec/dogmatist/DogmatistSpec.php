@@ -1,12 +1,8 @@
 <?php
 
-use Bravesheep\Dogmatist\Builder;
 use Bravesheep\Dogmatist\Exception\NoSuchIndexException;
 use Bravesheep\Dogmatist\Exception\SampleException;
 use Bravesheep\Dogmatist\Factory;
-use Bravesheep\Dogmatist\Guesser\GuesserInterface;
-use Bravesheep\Dogmatist\LinkManager;
-use Bravesheep\Dogmatist\Sampler;
 
 describe("Dogmatist", function () {
     beforeEach(function () {
@@ -15,23 +11,23 @@ describe("Dogmatist", function () {
 
     it("should be able to create builders", function () {
         $builder = $this->dogmatist->create('object');
-        expect($builder)->toBeAnInstanceOf(Builder::class);
+        expect($builder)->toBeAnInstanceOf('Bravesheep\Dogmatist\Builder');
     });
 
     it("should retrieve the link manager", function () {
-        expect($this->dogmatist->getLinkManager())->toBeAnInstanceOf(LinkManager::class);
+        expect($this->dogmatist->getLinkManager())->toBeAnInstanceOf('Bravesheep\Dogmatist\LinkManager');
     });
 
     it("should retrieve the sampler", function () {
-        expect($this->dogmatist->getSampler())->toBeAnInstanceOf(Sampler::class);
+        expect($this->dogmatist->getSampler())->toBeAnInstanceOf('Bravesheep\Dogmatist\Sampler');
     });
 
     it("should retrieve the guesser", function () {
-        expect($this->dogmatist->getGuesser())->toBeAnInstanceOf(GuesserInterface::class);
+        expect($this->dogmatist->getGuesser())->toBeAnInstanceOf('Bravesheep\Dogmatist\Guesser\GuesserInterface');
     });
 
     it("should retrieve the faker instance", function () {
-        expect($this->dogmatist->getFaker())->toBeAnInstanceOf(\Faker\Generator::class);
+        expect($this->dogmatist->getFaker())->toBeAnInstanceOf('Faker\Generator');
     });
 
     describe("working with saved builders", function () {
@@ -40,7 +36,7 @@ describe("Dogmatist", function () {
         });
 
         it("should create a sample from a saved builder", function () {
-            expect($this->dogmatist->sample('example'))->toBeAnInstanceOf(stdClass::class);
+            expect($this->dogmatist->sample('example'))->toBeAnInstanceOf('stdClass');
         });
 
         it("should retrieve the saved builder", function () {
@@ -92,7 +88,7 @@ describe("Dogmatist", function () {
             $this->dogmatist->create('array')->fake('item', 'randomNumber')->save('example', 1);
             $clone = $this->dogmatist->copy('example');
             expect($clone)->not->toBe($this->dogmatist->retrieve('example'));
-            expect($clone)->toBeAnInstanceOf(Builder::class);
+            expect($clone)->toBeAnInstanceOf('Bravesheep\Dogmatist\Builder');
         });
 
         it("should clone a saved builder with another type", function () {
@@ -134,7 +130,7 @@ describe("Dogmatist", function () {
 
         it("should create a sample from a non-saved builder", function () {
             $sample = $this->dogmatist->sample($this->builder);
-            expect($sample)->toBeAnInstanceOf(stdClass::class);
+            expect($sample)->toBeAnInstanceOf('stdClass');
             expect($sample->num)->toBeA('integer');
         });
 
@@ -142,13 +138,13 @@ describe("Dogmatist", function () {
             $samples = $this->dogmatist->samples($this->builder, 2);
             expect($samples)->toBeA('array');
             expect($samples)->toHaveLength(2);
-            expect($samples[0])->toBeAnInstanceOf(stdClass::class);
-            expect($samples[1])->toBeAnInstanceOf(stdClass::class);
+            expect($samples[0])->toBeAnInstanceOf('stdClass');
+            expect($samples[1])->toBeAnInstanceOf('stdClass');
         });
 
         it("should create a sample from a non-saved builder using the fresh method", function () {
             $sample = $this->dogmatist->freshSample($this->builder);
-            expect($sample)->toBeAnInstanceOf(stdClass::class);
+            expect($sample)->toBeAnInstanceOf('stdClass');
             expect($sample->num)->toBeA('integer');
         });
 
@@ -156,8 +152,8 @@ describe("Dogmatist", function () {
             $samples = $this->dogmatist->freshSamples($this->builder, 2);
             expect($samples)->toBeA('array');
             expect($samples)->toHaveLength(2);
-            expect($samples[0])->toBeAnInstanceOf(stdClass::class);
-            expect($samples[1])->toBeAnInstanceOf(stdClass::class);
+            expect($samples[0])->toBeAnInstanceOf('stdClass');
+            expect($samples[1])->toBeAnInstanceOf('stdClass');
         });
     });
 });

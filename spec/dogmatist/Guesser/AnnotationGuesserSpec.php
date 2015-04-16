@@ -3,15 +3,6 @@
 use Bravesheep\Dogmatist\Factory;
 use Bravesheep\Dogmatist\Field;
 use Bravesheep\Dogmatist\Guesser\AnnotationGuesser;
-use Bravesheep\Spec\Annotated\FakedFieldTest;
-use Bravesheep\Spec\Annotated\FieldAnnotatedTest;
-use Bravesheep\Spec\Annotated\MissingClassAnnotationTest;
-use Bravesheep\Spec\Annotated\NoneFieldTest;
-use Bravesheep\Spec\Annotated\RelationFieldTest;
-use Bravesheep\Spec\Annotated\RelationFieldWithConstructorTest;
-use Bravesheep\Spec\Annotated\SelectFieldTest;
-use Bravesheep\Spec\Annotated\ValueFieldTest;
-use Bravesheep\Spec\Annotated\WithConstructorTest;
 use kahlan\plugin\Stub;
 
 
@@ -26,9 +17,9 @@ describe("AnnotationGuesser", function () {
     });
 
     it("should create the properties for the constructor", function () {
-        $builder = $this->dogmatist->create(WithConstructorTest::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\Annotated\WithConstructorTest');
 
-        expect($builder->getClass())->toBe(WithConstructorTest::class);
+        expect($builder->getClass())->toBe('Bravesheep\Spec\Annotated\WithConstructorTest');
         expect($builder->hasConstructor())->toBe(true);
 
         $constructor = $builder->constructor();
@@ -43,45 +34,45 @@ describe("AnnotationGuesser", function () {
     });
 
     it("should set up a relation", function () {
-        $builder = $this->dogmatist->create(RelationFieldTest::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\Annotated\RelationFieldTest');
 
         expect($builder->get('relation')->getType())->toBe(Field::TYPE_RELATION);
         expect($builder->get('relation')->getRelated()->hasConstructor())->toBe(false);
     });
 
     it("should set up a relation with a constructor", function () {
-        $builder = $this->dogmatist->create(RelationFieldWithConstructorTest::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\Annotated\RelationFieldWithConstructorTest');
 
         expect($builder->get('relation')->getType())->toBe(Field::TYPE_RELATION);
         expect($builder->get('relation')->getRelated()->hasConstructor())->toBe(true);
     });
 
     it("should set up a none field", function () {
-        $builder = $this->dogmatist->create(NoneFieldTest::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\Annotated\NoneFieldTest');
 
         expect($builder->get('none')->getType())->toBe(Field::TYPE_NONE);
     });
 
     it("should set up a select field", function () {
-        $builder = $this->dogmatist->create(SelectFieldTest::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\Annotated\SelectFieldTest');
 
         expect($builder->get('select')->getType())->toBe(Field::TYPE_SELECT);
     });
 
     it("should set up a value field", function () {
-        $builder = $this->dogmatist->create(ValueFieldTest::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\Annotated\ValueFieldTest');
 
         expect($builder->get('value')->getType())->toBe(Field::TYPE_VALUE);
     });
 
     it("should set up a fake field", function () {
-        $builder = $this->dogmatist->create(FakedFieldTest::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\Annotated\FakedFieldTest');
 
         expect($builder->get('faked')->getType())->toBe(Field::TYPE_FAKE);
     });
 
     it("should use annotations if the class is not annotated", function () {
-        $builder = $this->dogmatist->create(MissingClassAnnotationTest::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\Annotated\MissingClassAnnotationTest');
 
         expect($builder->getFields())->toHaveLength(1);
         expect($builder->get('faked')->getType())->toBe(Field::TYPE_FAKE);
@@ -89,16 +80,16 @@ describe("AnnotationGuesser", function () {
     });
 
     it("should set up a field when annotated with a field annotation", function () {
-        $builder = $this->dogmatist->create(FieldAnnotatedTest::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\Annotated\FieldAnnotatedTest');
 
         expect($builder->get('field')->getType())->toBe(Field::TYPE_FAKE);
         expect($builder->get('field')->isMultiple())->toBe(true);
     });
 
     it("should set strict mode from the dogma annotation", function () {
-        $nonstrict = $this->dogmatist->create(WithConstructorTest::class);
-        $strict_implicit = $this->dogmatist->create(FakedFieldTest::class);
-        $strict_explicit = $this->dogmatist->create(ValueFieldTest::class);
+        $nonstrict = $this->dogmatist->create('Bravesheep\Spec\Annotated\WithConstructorTest');
+        $strict_implicit = $this->dogmatist->create('Bravesheep\Spec\Annotated\FakedFieldTest');
+        $strict_explicit = $this->dogmatist->create('Bravesheep\Spec\Annotated\ValueFieldTest');
 
         expect($nonstrict->isStrict())->toBe(false);
         expect($strict_explicit->isStrict())->toBe(true);

@@ -23,7 +23,7 @@ describe("DoctrineGuesser", function () {
 
     beforeEach(function () {
         $this->registry = Stub::create([
-            'extends' => AbstractManagerRegistry::class,
+            'extends' => 'Doctrine\Common\Persistence\AbstractManagerRegistry',
             'methods' => [],
             'params' => [null, [], [], null, null, null]
         ]);
@@ -34,7 +34,7 @@ describe("DoctrineGuesser", function () {
     });
 
     it("should map the basic fields of an entity", function () {
-        $builder = $this->dogmatist->create(BasicFieldTest::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\Entity\BasicFieldTest');
 
         expect($builder->getFields())->toHaveLength(11);
         expect($builder->get('id')->isType(Field::TYPE_NONE))->toBe(true);
@@ -59,12 +59,12 @@ describe("DoctrineGuesser", function () {
     });
 
     it("should generate a correct sample for the basic fields of an entity", function () {
-        $builder = $this->dogmatist->create(BasicFieldTest::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\Entity\BasicFieldTest');
         /** @var BasicFieldTest $sample */
         $sample = $this->dogmatist->sample($builder);
 
-        expect($sample->getDatetime())->toBeAnInstanceOf(\DateTime::class);
-        expect($sample->getDatetimetz())->toBeAnInstanceOf(\DateTime::class);
+        expect($sample->getDatetime())->toBeAnInstanceOf('DateTime');
+        expect($sample->getDatetimetz())->toBeAnInstanceOf('DateTime');
         expect(is_numeric($sample->getDecimal()))->toBe(true);
         expect($sample->getString())->toBeA('string');
     });

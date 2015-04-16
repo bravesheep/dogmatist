@@ -1,11 +1,9 @@
 <?php
 
-use Bravesheep\Dogmatist\Builder;
 use Bravesheep\Dogmatist\Exception\BuilderException;
 use Bravesheep\Dogmatist\Exception\SampleException;
 use Bravesheep\Dogmatist\Factory;
 use Bravesheep\Dogmatist\Field;
-use Bravesheep\Spec\ConstrExample;
 use Bravesheep\Spec\NonReqConstrExample;
 
 describe("ConstructorBuilder", function () {
@@ -15,39 +13,39 @@ describe("ConstructorBuilder", function () {
     });
 
     it("should return the base builder as a parent", function () {
-        $builder = $this->dogmatist->create(ConstrExample::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\ConstrExample');
         expect($builder->constructor()->done())->toBe($builder);
     });
 
     it("should not have been created in the parent constructor by default", function () {
-        $builder = $this->dogmatist->create(ConstrExample::class);
+        $builder = $this->dogmatist->create('Bravesheep\Spec\ConstrExample');
         expect($builder->hasConstructor())->toBe(false);
     });
 
     it("should not be possible to add a constructor to a constructor", function () {
         $task = function () {
-            $this->dogmatist->create(ConstrExample::class)->constructor()->constructor();
+            $this->dogmatist->create('Bravesheep\Spec\ConstrExample')->constructor()->constructor();
         };
         expect($task)->toThrow(new BuilderException());
     });
 
     it("should not be possible to save a constructor as a builder in the manager", function () {
         $task = function () {
-            $this->dogmatist->create(ConstrExample::class)->constructor()->save('example', 1);
+            $this->dogmatist->create('Bravesheep\Spec\ConstrExample')->constructor()->save('example', 1);
         };
         expect($task)->toThrow(new BuilderException());
     });
 
     it("should not be possible to add an event listener to the constructor", function () {
         $task = function () {
-            $this->dogmatist->create(ConstrExample::class)->constructor()->onCreate(function () {});
+            $this->dogmatist->create('Bravesheep\Spec\ConstrExample')->constructor()->onCreate(function () {});
         };
         expect($task)->toThrow(new BuilderException());
     });
 
     it("should not be possible to add a positional argument if named arguments exists", function () {
         $task = function () {
-            $this->dogmatist->create(ConstrExample::class)->constructor()
+            $this->dogmatist->create('Bravesheep\Spec\ConstrExample')->constructor()
                 ->fake('req1', 'randomNumber')
                 ->argFake('randomNumber');
         };
@@ -56,7 +54,7 @@ describe("ConstructorBuilder", function () {
 
     it("should not be possible to add an explicit positional argument if named arguments exist", function () {
         $task = function () {
-            $this->dogmatist->create(ConstrExample::class)->constructor()
+            $this->dogmatist->create('Bravesheep\Spec\ConstrExample')->constructor()
                 ->fake('req1', 'randomNumber')
                 ->fake(0, 'randomNumber');
         };
@@ -65,7 +63,7 @@ describe("ConstructorBuilder", function () {
 
     it("should not be possible to add a named argument if a positional argument exists", function () {
         $task = function () {
-            $this->dogmatist->create(ConstrExample::class)->constructor()
+            $this->dogmatist->create('Bravesheep\Spec\ConstrExample')->constructor()
                 ->argFake('randomNumber')
                 ->fake('req1', 'randomNumber');
         };
@@ -74,7 +72,7 @@ describe("ConstructorBuilder", function () {
 
     describe("working with positional arguments", function () {
         beforeEach(function () {
-            $this->builder = $this->dogmatist->create(ConstrExample::class);
+            $this->builder = $this->dogmatist->create('Bravesheep\Spec\ConstrExample');
         });
 
         it("should add a positional faked argument", function () {
@@ -122,7 +120,7 @@ describe("ConstructorBuilder", function () {
             expect($field->getName())->toBe(0);
             expect($field->getType())->toBe(Field::TYPE_RELATION);
             expect($field->isType(Field::TYPE_RELATION))->toBe(true);
-            expect($field->getRelated())->toBeAnInstanceOf(Builder::class);
+            expect($field->getRelated())->toBeAnInstanceOf('Bravesheep\Dogmatist\Builder');
             expect($field->getRelated()->done())->toBe($this->builder->constructor());
         });
 
@@ -140,12 +138,12 @@ describe("ConstructorBuilder", function () {
 
     describe("working with a constructor with optionals", function () {
         beforeEach(function () {
-            $this->builder = $this->dogmatist->create(NonReqConstrExample::class);
+            $this->builder = $this->dogmatist->create('Bravesheep\Spec\NonReqConstrExample');
         });
 
         it("should generate samples when no constructor is specified", function () {
             $sample = $this->sampler->sample($this->builder);
-            expect($sample)->toBeAnInstanceOf(NonReqConstrExample::class);
+            expect($sample)->toBeAnInstanceOf('Bravesheep\Spec\NonReqConstrExample');
             expect($sample->opt1)->toBe(NonReqConstrExample::OPT1_DEFAULT);
             expect($sample->opt2)->toBe(NonReqConstrExample::OPT2_DEFAULT);
         });
@@ -167,7 +165,7 @@ describe("ConstructorBuilder", function () {
 
     describe("working with a constructor with required items", function () {
         beforeEach(function () {
-            $this->builder = $this->dogmatist->create(ConstrExample::class);
+            $this->builder = $this->dogmatist->create('Bravesheep\Spec\ConstrExample');
         });
 
         it("should fail without calling the constructor in strict mode", function () {

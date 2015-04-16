@@ -31,7 +31,7 @@ class AnnotationGuesser implements GuesserInterface
         if (Util::isUserClass($class) && class_exists($class, true)) {
             $refl = new \ReflectionClass($class);
             /** @var Annotations\Dogma $annot */
-            $annot = $this->reader->getClassAnnotation($refl, Annotations\Dogma::class);
+            $annot = $this->reader->getClassAnnotation($refl, 'Bravesheep\Dogmatist\Guesser\Annotations\Dogma');
             if (null !== $annot) {
                 $builder->setStrict($annot->strict);
             }
@@ -134,7 +134,10 @@ class AnnotationGuesser implements GuesserInterface
     {
         $constructor = $refl->getConstructor();
         if (null !== $constructor) {
-            $annot = $this->reader->getMethodAnnotation($constructor, Annotations\Constructor::class);
+            $annot = $this->reader->getMethodAnnotation(
+                $constructor,
+                'Bravesheep\Dogmatist\Guesser\Annotations\Constructor'
+            );
             if (null !== $annot) {
                 $this->addConstructor($annot, $builder);
             }
