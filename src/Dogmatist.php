@@ -214,12 +214,15 @@ class Dogmatist
 
     /**
      * Retrieve a cloned copy of the specified builder.
-     * @param string $name
-     * @param string $type The new type of the cloned builder.
+     * @param string|Builder $builder
+     * @param string         $type The new type of the cloned builder.
      * @return Builder
      */
-    public function copy($name, $type = null)
+    public function copy($builder, $type = null)
     {
-        return $this->retrieve($name)->copy($type);
+        if (!($builder instanceof Builder)) {
+            $builder = $this->retrieve($builder);
+        }
+        return $builder->copy($type);
     }
 }

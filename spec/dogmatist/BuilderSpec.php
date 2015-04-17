@@ -219,13 +219,27 @@ describe("Builder", function () {
         expect($other)->not->toBe($constr);
     });
 
-    describe("cloning the builder", function () {
-        it("should create a clone of the builder", function () {
+    it("should allow me to visit a related builder again", function () {
+        $related = $this->builder->relation('rel', 'object');
+        expect($this->builder->in('rel'))->toBe($related);
+    });
+
+    it("should not allow me to visit a related builder if a field is not of that type", function () {
+        $task = function () {
+            $this->builder->link('num', 'random');
+            $this->builder->in('num');
+        };
+
+        expect($task)->toThrow(new BuilderException());
+    });
+
+    describe("copying the builder", function () {
+        it("should create a copy of the builder", function () {
             $clone = $this->builder->copy();
             expect($clone)->not->toBe($this->builder);
         });
 
-        it("should clone all fields of a builder", function () {
+        it("should copy all fields of a builder", function () {
             $callback = function ($a, $b) { return 'a'; };
 
             /** @var Builder $builder */
@@ -245,7 +259,7 @@ describe("Builder", function () {
             expect($clone->get('link')->getLinkTarget())->toBe('other');
         });
 
-        it("should clone a related builder and update the parent", function () {
+        it("should copy a related builder and update the parent", function () {
             $this->builder->relation('rel', 'object')->fake('faked', 'randomNumber')->done();
             $clone = $this->builder->copy();
 
@@ -268,6 +282,14 @@ describe("Builder", function () {
             $builder = $original->copy();
             expect($builder->constructor()->done())->toBe($builder);
             expect($builder->constructor())->not->toBe($original->constructor());
+        });
+
+        it("should copy a relation from a saved builder", function () {
+            $builder = $this->dogmatist->create('object')->fake('num', 'randomNumber');
+            $related = $this->builder->relationFromCopy('test', $builder);
+
+            expect($related)->not->toBe($builder);
+            expect($related->get('num')->getType())->toBe(Field::TYPE_FAKE);
         });
     });
 });

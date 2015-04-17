@@ -217,6 +217,34 @@ class Builder
     }
 
     /**
+     * @param string|int     $field
+     * @param string|Builder $builder
+     * @return Builder
+     */
+    public function relationFromCopy($field, $builder)
+    {
+        $copy = $this->dogmatist->copy($builder);
+        $copy->setStrict($this->isStrict());
+        $copy->setParent($this);
+
+        $field = $this->get($field);
+        $field->setRelation($copy);
+        return $copy;
+    }
+
+    /**
+     * @param string|int $relation
+     * @return Builder
+     */
+    public function in($relation)
+    {
+        if ($this->get($relation)->isType(Field::TYPE_RELATION)) {
+            return $this->get($relation)->getRelated();
+        }
+        throw new BuilderException("The field {$relation} is not of type relation");
+    }
+
+    /**
      * @param string|int $field
      * @return $this
      */
