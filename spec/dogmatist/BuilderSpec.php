@@ -7,11 +7,8 @@ use Bravesheep\Dogmatist\Field;
 use Bravesheep\Dogmatist\Guesser\NoneGuesser;
 
 describe("Builder", function () {
-    before(function () {
-        $this->dogmatist = Factory::create(\Faker\Factory::DEFAULT_LOCALE, new NoneGuesser());
-    });
-
     beforeEach(function () {
+        $this->dogmatist = Factory::create(\Faker\Factory::DEFAULT_LOCALE, new NoneGuesser());
         $this->builder = new Builder('object', $this->dogmatist);
     });
 
@@ -231,6 +228,20 @@ describe("Builder", function () {
         };
 
         expect($task)->toThrow(new BuilderException());
+    });
+
+    it("should not be possible to overwrite an existing builder", function () {
+        $task = function () {
+            $this->dogmatist->create('array')->fake('num', 'randomNumber')->save('a');
+            $this->dogmatist->create('array')->fake('other', 'randomNumber')->save('a');
+        };
+        expect($task)->toThrow(new BuilderException());
+    });
+
+    it("should save with the typename if no name is given", function () {
+        $builder = $this->dogmatist->create('array')->fake('num', 'randomNumber')->save();
+
+        expect($this->dogmatist->retrieve('array'))->toBe($builder);
     });
 
     describe("copying the builder", function () {

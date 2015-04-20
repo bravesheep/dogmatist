@@ -405,13 +405,24 @@ class Builder
 
     /**
      * Save this builder as a named builder in the attached Dogmatist instance.
+     * If no name is given, the typename is used.
+     * If a builder already exists with the given name, then this method fails. Either
+     * use `save()` on your Dogmatist instance directly, or choose a different name.
      * @param string $name     The name under which the Builder should be stored.
      * @param int    $generate The number of samples to generate, if less than
      *                         or equal to zero, unlimited samples will be generated.
      * @return $this
      */
-    public function save($name, $generate = -1)
+    public function save($name = null, $generate = -1)
     {
+        if (null === $name) {
+            $name = $this->getType();
+        }
+
+        if ($this->dogmatist->getLinkManager()->has($name)) {
+            throw new BuilderException("A builder with the name '{$name}' already exists");
+        }
+
         $this->dogmatist->save($this, $name, $generate);
         return $this;
     }

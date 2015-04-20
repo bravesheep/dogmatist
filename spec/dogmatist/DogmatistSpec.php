@@ -1,5 +1,6 @@
 <?php
 
+use Bravesheep\Dogmatist\Exception\BuilderException;
 use Bravesheep\Dogmatist\Exception\NoSuchIndexException;
 use Bravesheep\Dogmatist\Exception\SampleException;
 use Bravesheep\Dogmatist\Factory;
@@ -79,23 +80,33 @@ describe("Dogmatist", function () {
 
         it("should clear samples for overwritten builders", function () {
             $sample = $this->dogmatist->sample('example');
-            $this->dogmatist->create('array')->fake('item', 'randomNumber')->save('example', 1);
+            $builder = $this->dogmatist->create('array')->fake('item', 'randomNumber');
+            $this->dogmatist->save($builder, 'example', 1);
             $new_sample = $this->dogmatist->sample('example');
             expect($sample)->not->toBe($new_sample);
         });
 
         it("should clone a saved builder", function () {
-            $this->dogmatist->create('array')->fake('item', 'randomNumber')->save('example', 1);
-            $clone = $this->dogmatist->copy('example');
-            expect($clone)->not->toBe($this->dogmatist->retrieve('example'));
+            $this->dogmatist->create('array')->fake('item', 'randomNumber')->save('a', 1);
+            $clone = $this->dogmatist->copy('a');
+            expect($clone)->not->toBe($this->dogmatist->retrieve('a'));
             expect($clone)->toBeAnInstanceOf('Bravesheep\Dogmatist\Builder');
         });
 
         it("should clone a saved builder with another type", function () {
-            $this->dogmatist->create('array')->fake('item', 'randomNumber')->save('example', 1);
-            $clone = $this->dogmatist->copy('example', 'object');
+            $this->dogmatist->create('array')->fake('item', 'randomNumber')->save('a', 1);
+            $clone = $this->dogmatist->copy('a', 'object');
             expect($clone->getType())->toBe('object');
-            expect($this->dogmatist->retrieve('example')->getType())->toBe('array');
+            expect($this->dogmatist->retrieve('a')->getType())->toBe('array');
+        });
+
+        it("should be possible to overwrite an existing builder", function () {
+            $task = function () {
+                $builder = $this->dogmatist->create('array')->fake('item', 'randomNumber');
+                $this->dogmatist->save($builder, 'example', 1);
+            };
+
+            expect($task)->not->toThrow(new BuilderException());
         });
 
         describe("working with unlimited samples", function () {

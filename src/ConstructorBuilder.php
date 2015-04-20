@@ -126,7 +126,7 @@ class ConstructorBuilder extends Builder
     /**
      * {@inheritdoc}
      */
-    public function save($name, $generate = 1)
+    public function save($name = null, $generate = 1)
     {
         throw new BuilderException("Cannot save constructor builder");
     }
