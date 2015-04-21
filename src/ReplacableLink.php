@@ -10,17 +10,18 @@ class ReplacableLink
     public $value;
 
     /**
-     * @var string|int
+     * @var mixed[]
      */
-    public $field;
+    public $fields;
 
     /**
      * @param object|array $value
-     * @param string|int   $field
+     * @param mixed[]      $fields
+     * @param bool         $constructor
      */
-    public function __construct($value, $field)
+    public function __construct($value, array $fields)
     {
         $this->value = $value;
-        $this->field = $field;
+        $this->fields = $fields;
     }
 }

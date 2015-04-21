@@ -166,8 +166,8 @@ class Sampler
         } elseif (Field::TYPE_RELATION === $type) {
             $related = $field->getRelated();
             $value = $this->sample($related);
-            if ($related->hasLinkWithParent()) {
-                $value = new ReplacableLink($value, $related->getLinkParent());
+            if ($related->hasParentLinks()) {
+                $value = new ReplacableLink($value, $related->getParentLinks());
             }
         } elseif (Field::TYPE_LINK === $type) {
             $target = $field->getLinkTarget();
@@ -200,12 +200,12 @@ class Sampler
     private function insertInObject(array $data, Builder $builder)
     {
         // special case for arrays: just return the array data
-        if ($builder->getClass() === 'array' || $builder->getClass() === '__construct') {
+        if ($builder->getType() === 'array' || $builder->getType() === '__construct') {
             return $this->replaceLinksInArray($data, $builder);
         }
 
         // special case for generic objects (objects of type stdClass): just cast as an object
-        if ($builder->getClass() === 'object' || $builder->getClass() === 'stdClass') {
+        if ($builder->getType() === 'object' || $builder->getType() === 'stdClass') {
             return $this->replaceLinksInObject((object) $data, $builder);
         }
 
@@ -230,13 +230,19 @@ class Sampler
         foreach ($data as $key => &$value) {
             if ($value instanceof ReplacableArray) {
                 foreach ($value->data as &$subval) {
-                    $subval = $this->setObjectProperty($subval->value, $subval->field, $data, $builder);
+                    foreach ($subval->fields as $field) {
+                        $subval->value = $this->setObjectProperty($subval->value, $field, $data, $builder);
+                    }
+                    $subval = $subval->value;
                 }
                 $value = $value->data;
             }
 
             if ($value instanceof ReplacableLink) {
-                $value = $this->setObjectProperty($value->value, $value->field, $data, $builder);
+                foreach ($value->fields as $field) {
+                    $value->value = $this->setObjectProperty($value->value, $field, $data, $builder);
+                }
+                $value = $value->value;
             }
         }
         return $data;
@@ -253,14 +259,20 @@ class Sampler
         foreach (get_object_vars($obj) as $key => $value) {
             if ($value instanceof ReplacableArray) {
                 foreach ($value->data as &$subval) {
-                    $subval = $this->setObjectProperty($subval->value, $subval->field, $obj, $builder);
+                    foreach ($subval->fields as $field) {
+                        $subval->value = $this->setObjectProperty($subval->value, $field, $obj, $builder);
+                    }
+                    $subval = $subval->value;
                 }
                 $value = $value->data;
                 $obj->$key = $value;
             }
 
             if ($value instanceof ReplacableLink) {
-                $obj->$key = $this->setObjectProperty($value->value, $value->field, $obj, $builder);
+                foreach ($value->fields as $field) {
+                    $value->value = $this->setObjectProperty($value->value, $field, $obj, $builder);
+                }
+                $obj->$key = $value->value;
             }
         }
         return $obj;
@@ -279,13 +291,19 @@ class Sampler
     {
         if ($value instanceof ReplacableArray) {
             foreach ($value->data as &$subval) {
-                $subval = $this->setObjectProperty($subval->value, $subval->field, $obj, $builder);
+                foreach ($subval->fields as $field) {
+                    $subval->value = $this->setObjectProperty($subval->value, $field, $obj, $builder);
+                }
+                $subval = $subval->value;
             }
             $value = $value->data;
         }
 
         if ($value instanceof ReplacableLink) {
-            $value = $this->setObjectProperty($value->value, $value->field, $obj, $builder);
+            foreach ($value->fields as $field) {
+                $value->value = $this->setObjectProperty($value->value, $field, $obj, $builder);
+            }
+            $value = $value->value;
         }
 
         try {

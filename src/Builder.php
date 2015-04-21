@@ -52,9 +52,9 @@ class Builder
     private $last_field;
 
     /**
-     * @var string|int
+     * @var mixed[]
      */
-    private $link_parent;
+    private $parent_links;
 
     /**
      * @param string    $type
@@ -68,6 +68,7 @@ class Builder
         $this->dogmatist = $dogmatist;
         $this->parent = $parent;
         $this->strict = $strict;
+        $this->parent_links = [];
     }
 
     /**
@@ -333,25 +334,39 @@ class Builder
             throw new BuilderException("Cannot link back to the parent inside the constructor");
         }
 
-        $this->link_parent = $field;
+        $this->parent_links[] = $field;
 
         return $this;
     }
 
     /**
-     * @return string|int
+     * @param string|int $field
+     * @return $this
      */
-    public function getLinkParent()
+    public function unlinkParent($field)
     {
-        return $this->link_parent;
+        $this->parent_links = array_filter(
+            $this->parent_links,
+            function ($curr) use ($field) { return $curr !== $field; }
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function getParentLinks()
+    {
+        return $this->parent_links;
     }
 
     /**
      * @return bool
      */
-    public function hasLinkWithParent()
+    public function hasParentLinks()
     {
-        return $this->link_parent !== null;
+        return count($this->parent_links) > 0;
     }
 
     /**
@@ -512,7 +527,7 @@ class Builder
             $builder->constr->setParent($builder);
         }
 
-        $builder->link_parent = $this->link_parent;
+        $builder->parent_links = $this->parent_links;
 
         if ($type !== null) {
             $builder->setType($type);

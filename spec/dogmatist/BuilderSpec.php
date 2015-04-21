@@ -64,7 +64,7 @@ describe("Builder", function () {
         expect($field->getRelated())->toBe($other);
         expect($other->getClass())->toBe('array');
         expect($other->done())->toBe($this->builder);
-        expect($other->hasLinkWithParent())->toBe(false);
+        expect($other->hasParentLinks())->toBe(false);
     });
 
     it("should create a link to another builder", function () {
@@ -184,8 +184,14 @@ describe("Builder", function () {
     it("should be possible to set a link back to a parent for relations", function () {
         $other = $this->builder->relation('example', 'array')->linkParent('test');
 
-        expect($other->hasLinkWithParent())->toBe(true);
-        expect($other->getLinkParent())->toBe('test');
+        expect($other->hasParentLinks())->toBe(true);
+        expect($other->getParentLinks())->toBe(['test']);
+    });
+
+    it("should be possible to unlink to the parent for relations", function () {
+        $other = $this->builder->relation('example', 'array')->linkParent('test')->unlinkParent('test');
+        expect($other->hasParentLinks())->toBe(false);
+        expect($other->getParentLinks())->toBe([]);
     });
 
     it("should not be possible to create a link back to the parent in the constructor builder", function () {
