@@ -520,4 +520,22 @@ class Builder
 
         return $builder;
     }
+
+    /**
+     * @return array|object
+     */
+    public function sample()
+    {
+        return $this->dogmatist->sample($this);
+    }
+
+    /**
+     * @param int $count
+     * @return array|object[]
+     * @throws Exception\SampleException
+     */
+    public function samples($count)
+    {
+        return $this->dogmatist->samples($this, $count);
+    }
 }

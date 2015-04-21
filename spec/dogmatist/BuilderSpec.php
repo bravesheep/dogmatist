@@ -244,6 +244,21 @@ describe("Builder", function () {
         expect($this->dogmatist->retrieve('array'))->toBe($builder);
     });
 
+    it("can sample directly from the builder", function () {
+        $sample = $this->dogmatist->create('object')->fake('num', 'randomNumber')->sample();
+
+        expect($sample)->toBeAnInstanceOf('stdClass');
+        expect($sample->num)->toBeA('int');
+    });
+
+    it("can create multiple samples directly from the builder", function () {
+        $samples = $this->dogmatist->create('object')->fake('num', 'randomNumber')->samples(2);
+
+        expect($samples)->toHaveLength(2);
+        expect($samples[0])->toBeAnInstanceOf('stdClass');
+        expect($samples[1])->toBeAnInstanceOf('stdClass');
+    });
+
     describe("copying the builder", function () {
         it("should create a copy of the builder", function () {
             $clone = $this->builder->copy();
