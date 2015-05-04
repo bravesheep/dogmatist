@@ -255,4 +255,13 @@ class Dogmatist
             return null;
         }
     }
+
+    /**
+     * Reset the generated entities.
+     */
+    public function reset()
+    {
+        $this->getLinkManager()->reset();
+        $this->getSampler()->reset();
+    }
 }

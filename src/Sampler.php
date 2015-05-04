@@ -401,4 +401,12 @@ class Sampler
     {
         return $this->unique_tries;
     }
+
+    /**
+     * Remove all unique tries.
+     */
+    public function reset()
+    {
+        $this->sampled = [];
+    }
 }

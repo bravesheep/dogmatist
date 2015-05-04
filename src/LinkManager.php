@@ -95,4 +95,12 @@ class LinkManager
         }
         return false;
     }
+
+    /**
+     * Reset the generated samples.
+     */
+    public function reset()
+    {
+        $this->samples = [];
+    }
 }
