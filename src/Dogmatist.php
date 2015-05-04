@@ -225,4 +225,34 @@ class Dogmatist
         }
         return $builder->copy($type);
     }
+
+    /**
+     * @param string|Builder $builder
+     * @param callback       $callback
+     * @return null|array|object
+     */
+    public function matchingSample($builder, $callback)
+    {
+        if (is_string($builder) && !$this->getLinkManager()->hasUnlimitedSamples($builder)) {
+            foreach ($this->getLinkManager()->samples($builder) as $sample) {
+                if ($callback($sample)) {
+                    return $sample;
+                }
+            }
+            return null;
+        } else {
+            if (!($builder instanceof Builder)) {
+                $builder = $this->retrieve($builder);
+            }
+
+            $tries = $this->sampler->getUniqueTries();
+            for ($i = 0; $i < $tries; $i++) {
+                $sample = $this->sampler->sample($builder);
+                if ($callback($sample)) {
+                    return $sample;
+                }
+            }
+            return null;
+        }
+    }
 }

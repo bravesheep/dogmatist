@@ -393,4 +393,12 @@ class Sampler
 
         return $aligned;
     }
+
+    /**
+     * @return int
+     */
+    public function getUniqueTries()
+    {
+        return $this->unique_tries;
+    }
 }
