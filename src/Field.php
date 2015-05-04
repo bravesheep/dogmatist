@@ -346,7 +346,7 @@ class Field
     /**
      * @return Field
      */
-    public function __clone()
+    public function copy()
     {
         $field = new Field($this->name);
         $field->type = $this->type;

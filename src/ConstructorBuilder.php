@@ -6,6 +6,8 @@ use Bravesheep\Dogmatist\Exception\BuilderException;
 
 class ConstructorBuilder extends Builder
 {
+    const CONSTRUCTOR_TYPE = '__construct';
+
     private $positional = false;
 
     /**
@@ -14,7 +16,7 @@ class ConstructorBuilder extends Builder
      */
     public function __construct(Dogmatist $dogmatist, Builder $object)
     {
-        parent::__construct('__construct', $dogmatist, $object, $object->isStrict());
+        parent::__construct(self::CONSTRUCTOR_TYPE, $dogmatist, $object, $object->isStrict());
     }
 
     /**
@@ -145,5 +147,20 @@ class ConstructorBuilder extends Builder
     public function isPositional()
     {
         return $this->positional;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function copy($type = null)
+    {
+        if ($type !== null && $type !== self::CONSTRUCTOR_TYPE) {
+            throw new BuilderException("Cannot change the type of a constructor builder");
+        }
+
+        $builder = new ConstructorBuilder($this->dogmatist, $this->parent);
+        $this->copyData($builder);
+
+        return $builder;
     }
 }

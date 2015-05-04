@@ -19,12 +19,12 @@ class Builder
     /**
      * @var Dogmatist
      */
-    private $dogmatist;
+    protected $dogmatist;
 
     /**
      * @var Builder|null
      */
-    private $parent;
+    protected $parent;
 
     /**
      * @var Field[]
@@ -512,28 +512,33 @@ class Builder
     public function copy($type = null)
     {
         $builder = new Builder($this->type, $this->dogmatist, $this->parent, $this->strict);
-        foreach ($this->fields as $field) {
-            $new = clone $field;
-            if ($new->isType(Field::TYPE_RELATION)) {
-
-                $new->getRelated()->setParent($builder);
-            }
-            $builder->fields[$new->getName()] = $new;
-        }
-
-        $builder->listeners = $this->listeners;
-        if ($this->constr !== null) {
-            $builder->constr = clone $this->constr;
-            $builder->constr->setParent($builder);
-        }
-
-        $builder->parent_links = $this->parent_links;
+        $this->copyData($builder);
 
         if ($type !== null) {
             $builder->setType($type);
         }
 
         return $builder;
+    }
+
+    protected function copyData(Builder $copy)
+    {
+        foreach ($this->fields as $name => $field) {
+            $new = $field->copy();
+            if ($new->isType(Field::TYPE_RELATION)) {
+
+                $new->getRelated()->setParent($copy);
+            }
+            $copy->fields[$name] = $new;
+        }
+
+        $copy->listeners = $this->listeners;
+        if ($this->constr !== null) {
+            $copy->constr = $this->constr->copy();
+            $copy->constr->setParent($copy);
+        }
+
+        $copy->parent_links = $this->parent_links;
     }
 
     /**
