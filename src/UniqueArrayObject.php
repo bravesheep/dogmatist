@@ -8,11 +8,14 @@ class UniqueArrayObject extends \ArrayObject
 
     private $id;
 
-    public function __construct()
+    public $parent;
+
+    public function __construct(UniqueArrayObject $parent = null)
     {
         parent::__construct();
         self::$previous += 1;
         $this->id = self::$previous;
+        $this->parent = $parent;
     }
 
     public function getId()

@@ -55,9 +55,9 @@ class Sampler
      * @param Builder $builder
      * @return object|array
      */
-    public function sample(Builder $builder)
+    public function sample(Builder $builder, UniqueArrayObject $parent = null)
     {
-        $data = new UniqueArrayObject();
+        $data = new UniqueArrayObject($parent);
         $faker = $this->dogmatist->getFaker();
         foreach ($builder->getFields() as $field) {
             if (!$field->isType(Field::TYPE_NONE)) {
@@ -165,7 +165,7 @@ class Sampler
             $value = $faker->randomElement($field->getSelection());
         } elseif (Field::TYPE_RELATION === $type) {
             $related = $field->getRelated();
-            $value = $this->sample($related);
+            $value = $this->sample($related, $data);
             if ($related->hasParentLinks()) {
                 $value = new ReplacableLink($value, $related->getParentLinks());
             }
